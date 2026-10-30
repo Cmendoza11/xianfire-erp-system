@@ -1,0 +1,79 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{#if can.write}}
+      {{> pageHeading heading="Chart of Accounts" actionUrl=urls.accountingAccountNew actionLabel="New account" }}
+      {{else}}
+      {{> pageHeading heading="Chart of Accounts" }}
+      {{/if}}
+      <div class="card">
+        <div class="card-header flex flex-wrap gap-3">
+          <div class="w-64 max-w-full">
+            <input type="text" class="input" placeholder="Search code or name" data-account-search aria-label="Search code or name">
+          </div>
+          <select class="select w-auto" data-account-type-filter aria-label="Filter by type">
+            <option value="">All types</option>
+            {{#each types}}
+            <option value="{{ value }}">{{ label }}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Account Name</th>
+                <th>Type</th>
+                <th>Normal Balance</th>
+                <th class="num">Total Debit</th>
+                <th class="num">Total Credit</th>
+                <th class="num">Balance</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each accounts}}
+              <tr data-account-row data-code="{{ code }}" data-name="{{ name }}" data-type="{{ type }}">
+                <td class="font-mono">{{ code }}</td>
+                <td>
+                  {{#if @root.can.write}}<a href="{{ editUrl }}" class="hover:underline font-medium">{{ name }}</a>{{else}}<span class="font-medium">{{ name }}</span>{{/if}}
+                  {{#if isCash}}<span class="badge badge-info ml-1">Cash</span>{{/if}}
+                </td>
+                <td>{{ typeLabel }}</td>
+                <td class="capitalize">{{ normalBalance }}</td>
+                <td class="num">{{ formatSignedMoney totalDebit }}</td>
+                <td class="num">{{ formatSignedMoney totalCredit }}</td>
+                <td class="num font-medium">{{ formatSignedMoney balance }}</td>
+                <td>
+                  {{#if (eq status 1)}}
+                  <span class="badge badge-success">Active</span>
+                  {{else}}
+                  <span class="badge badge-secondary">Inactive</span>
+                  {{/if}}
+                </td>
+                <td class="text-right whitespace-nowrap">
+                  <a href="{{ ledgerUrl }}" class="btn btn-link mr-3">Ledger</a>
+                  {{#if @root.can.write}}
+                  <button type="button" class="btn btn-link" data-delete-account="{{ deleteApi }}" data-code="{{ code }}" data-name="{{ name }}">Delete</button>
+                  {{/if}}
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          <div class="flex w-full justify-center mt-2 text-sm {{#if accounts.length}}hidden{{/if}}" data-account-empty>
+            There is no account to display
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/account-grid.js" defer></script>
+{{> footer }}

@@ -1,0 +1,66 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto space-y-5">
+      {{> pageHeading heading="Bank Reconciliation" }}
+      {{#if can.write}}
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Start a reconciliation</div>
+          <p class="card-description">Enter the closing date and ending balance from your bank statement, then tick the transactions that appear on it.</p>
+        </div>
+        <div class="card-content">
+          {{#if accounts.length}}
+          <form id="startRecForm" method="POST" action="{{ urls.startReconciliation }}" novalidate data-json-form
+            data-success-redirect="view" class="grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <label class="grid gap-1 text-sm sm:col-span-2">
+              <span class="font-medium">Cash or bank account</span>
+              <select name="account" class="select">
+                {{#each accounts}}<option value="{{ uuid }}">{{ label }}</option>{{/each}}
+              </select>
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Statement date</span>
+              <input type="date" name="statement_date" class="input" value="{{ today }}" data-required="A statement date is required">
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Statement ending balance</span>
+              <input type="number" step="0.01" name="statement_balance" class="input text-right" data-required="Enter the statement balance">
+            </label>
+            <div class="sm:col-span-4 flex justify-end"><button type="submit" class="btn btn-primary">Start</button></div>
+          </form>
+          {{else}}
+          <p class="text-sm text-muted">No cash or bank accounts yet. Tick "Cash or bank account" on an asset account in the Chart of Accounts.</p>
+          {{/if}}
+        </div>
+      </div>
+      {{/if}}
+
+      <div class="card">
+        <div class="card-content pt-5 overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Account</th><th>Statement date</th><th class="num">Statement balance</th><th>Status</th><th>Completed</th><th></th></tr></thead>
+            <tbody>
+              {{#each reconciliations}}
+              <tr>
+                <td>{{ account }}</td>
+                <td>{{ statementDate }}</td>
+                <td class="num">{{ formatSignedMoney statementBalance }}</td>
+                <td>{{#if isDraft}}<span class="badge badge-warning">In progress</span>{{else}}<span class="badge badge-success">Completed</span>{{/if}}</td>
+                <td class="text-sm text-muted">{{#if completedAt}}{{ formatDateTime completedAt }}{{#if completedBy}} by {{ completedBy }}{{/if}}{{/if}}</td>
+                <td class="text-right"><a href="{{ viewUrl }}" class="btn btn-link">{{#if isDraft}}Continue{{else}}View{{/if}}</a></td>
+              </tr>
+              {{else}}
+              <tr><td colspan="6" class="text-center text-muted">No reconciliations yet</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

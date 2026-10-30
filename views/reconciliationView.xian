@@ -1,0 +1,70 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto space-y-5">
+      <div class="no-print flex flex-wrap items-center justify-between gap-3">
+        {{> pageHeading heading=(concat "Reconcile " rec.account) backUrl=urls.reconciliationGrid }}
+        <button type="button" class="btn btn-outline" data-print>Print</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="kpi"><div class="kpi-label">Statement balance ({{ rec.statementDate }})</div><div class="kpi-value">{{ formatSignedMoney rec.statementBalance }}</div></div>
+        <div class="kpi"><div class="kpi-label">Cleared balance</div><div class="kpi-value" data-cleared-balance>{{ formatSignedMoney rec.clearedBalance }}</div></div>
+        <div class="kpi"><div class="kpi-label">Difference</div><div class="kpi-value {{#unless rec.canComplete}}{{#if rec.isDraft}}text-destructive{{/if}}{{/unless}}" data-difference>{{ formatSignedMoney rec.difference }}</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header flex flex-wrap justify-between gap-3">
+          <div>
+            <div class="card-title">{{#if rec.isDraft}}Tick the transactions shown on the statement{{else}}Transactions cleared in this reconciliation{{/if}}</div>
+            <p class="card-description">{{#if rec.isDraft}}Complete becomes available when the difference is zero.{{else}}<span class="badge badge-success">Completed</span>{{/if}}</p>
+          </div>
+          {{#if can.write}}
+          <div class="flex gap-2 no-print">
+            {{#if rec.isDraft}}
+            <button type="button" class="btn btn-outline" data-api-action="{{ rec.deleteApi }}" data-method="DELETE"
+              data-confirm-heading="Delete this reconciliation" data-confirm-content="Ticked transactions are released. Nothing in the ledger changes."
+              data-confirm-label="Delete" data-success-redirect="{{ urls.reconciliationGrid }}">Delete</button>
+            <button type="button" class="btn btn-primary" data-complete-rec {{#unless rec.canComplete}}disabled{{/unless}}
+              data-api-action="{{ rec.completeApi }}" data-confirm-heading="Complete reconciliation" data-confirm-label="Complete"
+              data-confirm-content="The ticked transactions will be locked as cleared." data-success-message="Reconciliation completed" data-success-redirect="reload">Complete</button>
+            {{else}}
+            <button type="button" class="btn btn-outline" data-api-action="{{ rec.undoApi }}"
+              data-confirm-heading="Reopen reconciliation" data-confirm-content="Only the latest reconciliation of an account can be reopened."
+              data-confirm-label="Reopen" data-success-message="Reopened" data-success-redirect="reload">Reopen</button>
+            {{/if}}
+          </div>
+          {{/if}}
+        </div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th class="w-10">Cleared</th><th>Date</th><th>Entry</th><th>Reference</th><th>Description</th><th class="num">Deposit</th><th class="num">Withdrawal</th></tr></thead>
+            <tbody>
+              {{#each rec.lines}}
+              <tr>
+                <td>
+                  <input type="checkbox" data-rec-line="{{ id }}" aria-label="Cleared" {{#if cleared}}checked{{/if}}
+                    {{#unless @root.rec.isDraft}}disabled{{/unless}}{{#unless @root.can.write}} disabled{{/unless}}>
+                </td>
+                <td class="whitespace-nowrap">{{ date }}</td>
+                <td><a href="{{ entryUrl }}" class="hover:underline font-mono">{{ entryNumber }}</a></td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td>{{ description }}</td>
+                <td class="num">{{#if (gt deposit 0)}}{{ formatMoney deposit }}{{/if}}</td>
+                <td class="num">{{#if (gt withdrawal 0)}}{{ formatMoney withdrawal }}{{/if}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="7" class="text-center text-muted">No transactions up to the statement date</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/reconciliation.js" defer data-toggle-api="{{ rec.toggleApi }}"></script>
+{{> footer }}

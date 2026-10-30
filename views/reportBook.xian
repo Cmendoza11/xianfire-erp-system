@@ -1,0 +1,61 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading=title }}
+        <form method="GET" action="{{ formAction }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm"><span class="font-medium">From</span><input type="date" name="from" class="input" value="{{ period.from }}"></label>
+          <label class="grid gap-1 text-sm"><span class="font-medium">To</span><input type="date" name="to" class="input" value="{{ period.to }}"></label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+      <div class="card p-6">
+        {{> reportHeader reportTitle=title periodLabel=(concat "For the period " period.from " to " period.to) }}
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>{{ numberLabel }}</th>
+                <th>Reference</th>
+                <th>{{ contactLabel }}</th>
+                <th>TIN</th>
+                <th class="num">Net of VAT</th>
+                <th class="num">VAT</th>
+                <th class="num">Gross</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each report.documents}}
+              <tr class="{{#if (eq status "void")}}text-muted{{/if}}">
+                <td class="whitespace-nowrap">{{ issueDate }}</td>
+                <td><a href="{{ viewUrl }}" class="hover:underline font-mono">{{ number }}</a>{{#if (eq status "void")}} <span class="badge badge-secondary">Void</span>{{/if}}</td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td>{{ contact.name }}</td>
+                <td>{{#if contact.tin}}{{ contact.tin }}{{else}}-{{/if}}</td>
+                <td class="num">{{ formatMoney subtotal }}</td>
+                <td class="num">{{ formatMoney vatAmount }}</td>
+                <td class="num">{{ formatMoney total }}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="8" class="text-center text-muted">Nothing issued in this period</td></tr>
+              {{/each}}
+              <tr class="report-row-grand">
+                <td colspan="5" class="text-right">Total (excluding void)</td>
+                <td class="num">{{ formatMoney report.totals.subtotal }}</td>
+                <td class="num">{{ formatMoney report.totals.vatAmount }}</td>
+                <td class="num">{{ formatMoney report.totals.total }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

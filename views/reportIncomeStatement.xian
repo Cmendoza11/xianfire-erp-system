@@ -1,0 +1,60 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="Income Statement" }}
+        <form method="GET" action="{{ urls.reportIncomeStatement }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">From</span>
+            <input type="date" name="from" class="input" value="{{ period.from }}">
+          </label>
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">To</span>
+            <input type="date" name="to" class="input" value="{{ period.to }}">
+          </label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+
+      <div class="card p-6">
+        {{> reportHeader reportTitle="Income Statement" periodLabel=(concat "For the period " period.from " to " period.to) }}
+        <table class="data-table">
+          <tbody>
+            <tr class="report-section"><td colspan="2">Revenue</td></tr>
+            {{#each report.revenue.accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{else}}
+            <tr><td class="report-indent text-muted" colspan="2">No revenue in this period</td></tr>
+            {{/each}}
+            <tr class="report-row-total"><td>Total Revenue</td><td class="num">{{ formatSignedMoney report.revenue.total }}</td></tr>
+
+            <tr class="report-section"><td colspan="2">Expenses</td></tr>
+            {{#each report.expense.accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{else}}
+            <tr><td class="report-indent text-muted" colspan="2">No expenses in this period</td></tr>
+            {{/each}}
+            <tr class="report-row-total"><td>Total Expenses</td><td class="num">{{ formatSignedMoney report.expense.total }}</td></tr>
+
+            <tr class="report-row-grand">
+              <td>{{#if report.isLoss}}Net Loss{{else}}Net Income{{/if}}</td>
+              <td class="num {{#if report.isLoss}}text-destructive{{/if}}">{{ formatSignedMoney report.netIncome }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

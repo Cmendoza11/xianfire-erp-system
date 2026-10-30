@@ -1,0 +1,66 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{#if can.write}}
+      {{> pageHeading heading=config.plural actionUrl=page.newUrl actionLabel=(concat "New " (lowercase config.label)) }}
+      {{else}}
+      {{> pageHeading heading=config.plural }}
+      {{/if}}
+      <div class="card">
+        <form method="GET" action="{{ page.gridUrl }}" class="card-header flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">Status</span>
+            <select name="status" class="select">
+              {{#each statusFilters}}<option value="{{ value }}" {{#if selected}}selected{{/if}}>{{ label }}</option>{{/each}}
+            </select>
+          </label>
+          <label class="grid gap-1 text-sm grow min-w-[16rem]">
+            <span class="font-medium">Search</span>
+            <input type="text" name="keyword" class="input" placeholder="{{ config.contactLabel }}, reference or number" value="{{ documents.keyword }}">
+          </label>
+          <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Date</th>
+                <th>Due</th>
+                <th>{{ config.contactLabel }}</th>
+                <th>Reference</th>
+                <th>Status</th>
+                <th class="num">Total</th>
+                <th class="num">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each documents.items}}
+              <tr>
+                <td><a href="{{ viewUrl }}" class="hover:underline font-medium font-mono">{{ number }}</a></td>
+                <td class="whitespace-nowrap">{{ issueDate }}</td>
+                <td class="whitespace-nowrap">{{ dueDate }}</td>
+                <td>{{ contact.name }}</td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td>{{> documentStatus }}</td>
+                <td class="num">{{ formatMoney total }}</td>
+                <td class="num">{{ formatMoney balance }}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          {{#unless documents.items.length}}
+          <div class="flex w-full justify-center mt-2 text-sm">Nothing to display</div>
+          {{/unless}}
+          {{> pagination}}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/journal-grid.js" defer></script>
+{{> footer }}

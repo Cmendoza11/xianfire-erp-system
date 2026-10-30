@@ -1,0 +1,126 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{> pageHeading heading=(concat "Journal Entry " entry.entryNumber) backUrl=urls.accountingJournalGrid }}
+      <div class="grid gap-5 grid-cols-1">
+        {{#if entry.reversedBy}}
+        <div class="notice notice-warning">This entry was reversed by <a href="{{ entry.reversedBy.url }}" class="font-semibold underline">{{ entry.reversedBy.number }}</a>. Its effect on the ledger is cancelled.</div>
+        {{/if}}
+        {{#if entry.reversalOf}}
+        <div class="notice notice-info">This entry reverses <a href="{{ entry.reversalOf.url }}" class="font-semibold underline">{{ entry.reversalOf.number }}</a>.</div>
+        {{/if}}
+        {{#if entry.sourceDocument}}
+        <div class="notice notice-info">Posted from {{ lowercase entry.sourceDocument.label }} <a href="{{ entry.sourceDocument.url }}" class="font-semibold underline">{{ entry.sourceDocument.number }}</a>. To correct it, void the document or its payment there.</div>
+        {{/if}}
+        {{#if entry.reconciled}}
+        <div class="notice notice-info">Some lines of this entry are cleared in a completed bank reconciliation.</div>
+        {{/if}}
+        {{#if entry.isClosing}}
+        <div class="notice notice-info">This is a fiscal year closing entry. It moves revenue and expense balances into retained earnings and is removed by reopening the year in <a href="{{ urls.periodClosing }}" class="font-semibold underline">Period Closing</a>.</div>
+        {{else}}
+        {{#if entry.inClosedPeriod}}
+        <div class="notice notice-info">This entry is in a closed period (books closed through {{ entry.lockDate }}). It can no longer be deleted; record an adjusting or reversing entry in an open period instead.</div>
+        {{/if}}
+        {{/if}}
+        <div class="card">
+          <div class="card-header flex flex-wrap gap-3 justify-between">
+            <div class="card-title">{{ entry.description }}</div>
+            {{#if can.write}}{{#unless entry.deleteBlockedReason}}
+            <button type="button" class="btn btn-destructive" data-delete-entry="{{ entry.deleteApi }}"
+              data-entry-number="{{ entry.entryNumber }}" data-grid-url="{{ urls.accountingJournalGrid }}">Delete entry</button>
+            {{/unless}}{{/if}}
+          </div>
+          <div class="card-content">
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div>
+                <div class="text-xs uppercase text-muted">Entry No.</div>
+                <div class="font-medium">{{ entry.entryNumber }}</div>
+              </div>
+              <div>
+                <div class="text-xs uppercase text-muted">Date</div>
+                <div class="font-medium">{{ entry.entryDate }}</div>
+              </div>
+              <div>
+                <div class="text-xs uppercase text-muted">Reference</div>
+                <div class="font-medium">{{#if entry.reference}}{{ entry.reference }}{{else}}-{{/if}}</div>
+              </div>
+              <div>
+                <div class="text-xs uppercase text-muted">Type</div>
+                <div class="font-medium">{{ entry.entryTypeLabel }}</div>
+              </div>
+              <div>
+                <div class="text-xs uppercase text-muted">Created by</div>
+                <div class="font-medium">{{#if entry.createdBy}}{{ entry.createdBy }}{{else}}-{{/if}}</div>
+              </div>
+              <div>
+                <div class="text-xs uppercase text-muted">Created at</div>
+                <div class="font-medium">{{ formatDateTime entry.createdAt }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-content pt-5 overflow-x-auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Account</th>
+                  <th>Line Description</th>
+                  <th class="num">Debit</th>
+                  <th class="num">Credit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each entry.lines}}
+                <tr>
+                  <td class="{{#if (gt credit 0)}}pl-10{{/if}}">
+                    {{#if account}}<a href="{{ account.editUrl }}" class="hover:underline">{{ account.code }} - {{ account.name }}</a>{{/if}}
+                  </td>
+                  <td>{{ description }}</td>
+                  <td class="num">{{#if (gt debit 0)}}{{ formatMoney debit }}{{/if}}</td>
+                  <td class="num">{{#if (gt credit 0)}}{{ formatMoney credit }}{{/if}}</td>
+                </tr>
+                {{/each}}
+                <tr>
+                  <td></td>
+                  <td class="text-right font-semibold">Total</td>
+                  <td class="num font-semibold">{{ formatMoney entry.totalDebit }}</td>
+                  <td class="num font-semibold">{{ formatMoney entry.totalCredit }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {{#if can.write}}{{#unless entry.reverseBlockedReason}}
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Reverse this entry</div>
+            <p class="card-description">Posts a new entry with every debit and credit swapped, cancelling this one while keeping both in the ledger. Use it to correct a mistake instead of deleting.</p>
+          </div>
+          <div class="card-content">
+            <form id="reverseEntryForm" class="flex flex-wrap items-end gap-3" method="POST" action="{{ entry.reverseApi }}" novalidate
+              data-json-form data-entry-number="{{ entry.entryNumber }}">
+              <label class="grid gap-1 text-sm">
+                <span class="font-medium">Reversal date</span>
+                <input type="date" name="entry_date" class="input" value="{{ reverseDefaultDate }}" min="{{ entry.entryDate }}" data-required="A reversal date is required">
+              </label>
+              <label class="grid gap-1 text-sm grow min-w-[16rem]">
+                <span class="font-medium">Reason (optional)</span>
+                <input type="text" name="reason" class="input" placeholder="e.g. Wrong account used" maxlength="200">
+              </label>
+              <button type="submit" class="btn btn-outline">Reverse entry</button>
+            </form>
+          </div>
+        </div>
+        {{/unless}}{{/if}}
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/journal-view.js" defer></script>
+{{> footer }}

@@ -1,0 +1,30 @@
+{
+  "name": "xianfires-erp",
+  "version": "1.0.0",
+  "description": "Accounting system (chart of accounts and journal entries) built on the XianFire framework",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "xian-start": "node index.js",
+    "xian": "nodemon index.js",
+    "start": "node index.js",
+    "migrate": "node migrate.js",
+    "create:model": "node create.js model",
+    "create:controller": "node create.js controller",
+    "user:create": "node user.js create",
+    "user:changePassword": "node user.js changePassword"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3",
+    "hbs": "^4.2.0",
+    "inquirer": "^9.2.15",
+    "mysql2": "^3.9.2",
+    "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

@@ -1,0 +1,70 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="Trial Balance" }}
+        <form method="GET" action="{{ urls.reportTrialBalance }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">As of</span>
+            <input type="date" name="as_of" class="input" value="{{ asOf }}">
+          </label>
+          <label class="flex items-center gap-2 text-sm h-9">
+            <input type="checkbox" name="exclude_closing" value="1" {{#if excludeClosing}}checked{{/if}}>
+            Pre-closing (exclude closing entries)
+          </label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+
+      <div class="card p-6">
+        {{#if excludeClosing}}
+        {{> reportHeader reportTitle="Pre-closing Trial Balance" periodLabel=(concat "As of " asOf) }}
+        {{else}}
+        {{> reportHeader reportTitle="Trial Balance" periodLabel=(concat "As of " asOf) }}
+        {{/if}}
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Account Name</th>
+                <th>Type</th>
+                <th class="num">Debit</th>
+                <th class="num">Credit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each report.accounts}}
+              <tr>
+                <td class="font-mono">{{ code }}</td>
+                <td><a href="{{ ledgerUrl }}" class="hover:underline">{{ name }}</a></td>
+                <td>{{ typeLabel }}</td>
+                <td class="num">{{#if (gt debit 0)}}{{ formatMoney debit }}{{/if}}</td>
+                <td class="num">{{#if (gt credit 0)}}{{ formatMoney credit }}{{/if}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="5" class="text-center text-muted">No account balances as of this date</td></tr>
+              {{/each}}
+              <tr class="report-row-grand">
+                <td colspan="3" class="text-right">Total</td>
+                <td class="num">{{ formatMoney report.totalDebit }}</td>
+                <td class="num">{{ formatMoney report.totalCredit }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        {{#if report.balanced}}
+        <div class="mt-3 text-sm font-medium text-green-700">Balanced — total debits equal total credits.</div>
+        {{else}}
+        <div class="mt-3 text-sm font-medium text-destructive">Out of balance by {{ formatMoney report.difference }}</div>
+        {{/if}}
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

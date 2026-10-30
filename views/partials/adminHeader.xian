@@ -1,0 +1,31 @@
+<header class="h-14 bg-white border-b border-border flex items-center justify-between px-4 sticky top-0 z-30">
+  <div class="flex items-center gap-3">
+    <button type="button" class="md:hidden p-2 -ml-2 rounded hover:bg-gray-100" data-nav-toggle aria-label="Toggle menu">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <a href="{{ urls.dashboard }}" class="flex items-center gap-2">
+      {{> logo class="w-8 h-auto" }}
+      <span class="font-semibold text-gray-800 hidden sm:inline">XianFire Accounting</span>
+    </a>
+  </div>
+  {{#if adminUser}}
+  <div class="relative" data-dropdown>
+    <button type="button" data-dropdown-toggle aria-label="Account menu"
+      class="w-9 h-9 flex items-center justify-center rounded-full bg-primary/40 font-semibold border-2 border-primary hover:bg-primary/60 transition-colors uppercase">
+      {{ adminUser.initial }}
+    </button>
+    <div data-dropdown-menu class="hidden absolute right-0 mt-2 w-56 bg-white border border-border rounded-md shadow-lg py-1">
+      <div class="px-3 py-2 text-base">Hello <span class="text-primary">{{ adminUser.fullName }}!</span>
+        <div class="text-xs text-muted">{{ adminUser.roleLabel }}</div>
+      </div>
+      <div class="border-t border-border my-1"></div>
+      <a href="{{ urls.changePassword }}" class="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-gray-50">Change password</a>
+      <button type="button" data-logout="{{ urls.adminLogoutJson }}" data-login-url="{{ urls.adminLogin }}"
+        class="w-full flex items-center gap-2 px-3 py-2 text-sm text-destructive hover:bg-red-50">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
+        Logout
+      </button>
+    </div>
+  </div>
+  {{/if}}
+</header>

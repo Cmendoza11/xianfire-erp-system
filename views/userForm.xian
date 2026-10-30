@@ -1,0 +1,60 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[50rem] mx-auto">
+      {{#if user}}
+      {{> pageHeading heading=(concat "Edit " user.email) backUrl=urls.userGrid }}
+      {{else}}
+      {{> pageHeading heading="New user" backUrl=urls.userGrid }}
+      {{/if}}
+      <form id="userForm" method="POST" action="{{ form.action }}" novalidate data-json-form data-method="{{ form.method }}"
+        {{#if user}}data-success-message="User saved"{{else}}data-success-message="User created" data-success-redirect="{{ urls.userGrid }}"{{/if}}>
+        <div class="card">
+          <div class="card-content pt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="field-label" for="full_name">Full name<span class="required">*</span></label>
+              <input id="full_name" name="full_name" class="input" value="{{ user.fullName }}" data-required="Full name is required">
+            </div>
+            <div>
+              <label class="field-label" for="email">Email{{#unless user}}<span class="required">*</span>{{/unless}}</label>
+              {{#if user}}
+              <input id="email" class="input bg-gray-50" value="{{ user.email }}" disabled>
+              {{else}}
+              <input id="email" name="email" type="email" class="input" autocomplete="off" data-required="Email is required">
+              {{/if}}
+            </div>
+            <div>
+              <label class="field-label" for="role">Role</label>
+              <select id="role" name="role" class="select">
+                {{#each roles}}<option value="{{ value }}" {{#if selected}}selected{{/if}}>{{ label }}</option>{{/each}}
+              </select>
+            </div>
+            {{#if user}}
+            <div>
+              <label class="field-label" for="status">Status</label>
+              <select id="status" name="status" class="select">
+                <option value="1" {{#if (eq user.status 1)}}selected{{/if}}>Active</option>
+                <option value="0" {{#if (eq user.status 0)}}selected{{/if}}>Inactive</option>
+              </select>
+            </div>
+            {{/if}}
+            <div class="sm:col-span-2">
+              <label class="field-label" for="password">{{#if user}}New password (leave blank to keep){{else}}Password<span class="required">*</span>{{/if}}</label>
+              <input id="password" name="password" type="password" class="input" autocomplete="new-password"
+                {{#unless user}}data-required="Password is required"{{/unless}}>
+              <p class="field-help">At least {{ minPasswordLength }} characters</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+          <a href="{{ urls.userGrid }}" class="btn btn-destructive">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+{{> footer }}

@@ -1,0 +1,140 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto space-y-5">
+      <div class="no-print flex flex-wrap items-center justify-between gap-3">
+        {{> pageHeading heading=(concat config.label " " document.number) backUrl=page.gridUrl }}
+        <button type="button" class="btn btn-outline" data-print>Print</button>
+      </div>
+      {{#if (eq document.status "void")}}
+      <div class="notice notice-warning">Voided on {{ document.voidedOn }}. The posting was cancelled by <a href="{{ document.voidEntry.url }}" class="font-semibold underline">{{ document.voidEntry.number }}</a>.</div>
+      {{/if}}
+
+      <div class="card p-6">
+        <div class="flex flex-wrap justify-between gap-4">
+          <div>
+            <div class="text-xs uppercase text-muted">{{ config.contactLabel }}</div>
+            <div class="text-lg font-semibold">{{ document.contact.name }}</div>
+            {{#if document.contact.address}}<div class="text-sm text-muted whitespace-pre-line">{{ document.contact.address }}</div>{{/if}}
+            {{#if document.contact.tin}}<div class="text-sm text-muted">TIN: {{ document.contact.tin }}</div>{{/if}}
+          </div>
+          <div class="text-right">
+            <div class="text-2xl font-bold font-mono">{{ document.number }}</div>
+            <div class="mt-1">{{> documentStatus overdue=document.overdue status=document.status }}</div>
+            <div class="text-sm mt-2">Date: <strong>{{ document.issueDate }}</strong></div>
+            <div class="text-sm">Due: <strong>{{ document.dueDate }}</strong>{{#if document.overdue}} <span class="text-destructive">({{ document.daysOverdue }} days overdue)</span>{{/if}}</div>
+            {{#if document.reference}}<div class="text-sm">Reference: {{ document.reference }}</div>{{/if}}
+          </div>
+        </div>
+        {{#if document.memo}}<p class="text-sm mt-4">{{ document.memo }}</p>{{/if}}
+
+        <table class="data-table mt-5">
+          <thead><tr><th>Account</th><th>Description</th><th class="num">Qty</th><th class="num">Unit price</th><th class="num">Amount</th></tr></thead>
+          <tbody>
+            {{#each document.lines}}
+            <tr>
+              <td>{{ account }}</td>
+              <td>{{ description }}</td>
+              <td class="num">{{ quantity }}</td>
+              <td class="num">{{ formatMoney unitPrice }}</td>
+              <td class="num">{{ formatMoney amount }}</td>
+            </tr>
+            {{/each}}
+            <tr><td colspan="4" class="text-right">Subtotal</td><td class="num">{{ formatMoney document.subtotal }}</td></tr>
+            <tr><td colspan="4" class="text-right">VAT ({{ document.vatRate }}%)</td><td class="num">{{ formatMoney document.vatAmount }}</td></tr>
+            <tr class="report-row-total"><td colspan="4" class="text-right">Total</td><td class="num">{{ formatMoney document.total }}</td></tr>
+            <tr><td colspan="4" class="text-right">Paid</td><td class="num">{{ formatMoney document.amountPaid }}</td></tr>
+            <tr class="report-row-grand"><td colspan="4" class="text-right">Balance due</td><td class="num">{{ formatMoney document.balance }}</td></tr>
+          </tbody>
+        </table>
+        <p class="text-xs text-muted mt-3 no-print">Posted as <a href="{{ document.entry.url }}" class="text-primary hover:underline">{{ document.entry.number }}</a></p>
+      </div>
+
+      <div class="card no-print">
+        <div class="card-header"><div class="card-title">Payments</div></div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Date</th><th>Account</th><th>Reference</th><th>Entry</th><th class="num">Amount</th><th></th></tr></thead>
+            <tbody>
+              {{#each document.payments}}
+              <tr class="{{#if isVoid}}text-muted line-through{{/if}}">
+                <td>{{ date }}</td>
+                <td>{{ account }}</td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td><a href="{{ entry.url }}" class="hover:underline font-mono">{{ entry.number }}</a></td>
+                <td class="num">{{ formatMoney amount }}</td>
+                <td class="text-right">
+                  {{#if isVoid}}<span class="badge badge-secondary">Void</span>
+                  {{else if @root.can.write}}
+                  <button type="button" class="btn btn-link" data-api-action="{{ voidApi }}" data-payload='{"void_date":"{{ @root.defaultDate }}"}'
+                    data-confirm-heading="Void this payment" data-confirm-content="A reversing entry dated {{ @root.defaultDate }} cancels this payment and the balance becomes due again."
+                    data-confirm-label="Void payment" data-success-message="Payment voided" data-success-redirect="reload">Void</button>
+                  {{/if}}
+                </td>
+              </tr>
+              {{else}}
+              <tr><td colspan="6" class="text-center text-muted">No payments yet</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+
+          {{#if can.write}}{{#if (eq document.status "open")}}
+          <form id="paymentForm" method="POST" action="{{ document.paymentApi }}" novalidate data-json-form
+            data-success-message="Payment recorded" data-success-redirect="reload" class="mt-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Payment date</span>
+              <input type="date" name="payment_date" class="input" value="{{ defaultDate }}" min="{{ document.issueDate }}" data-required="A payment date is required">
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Amount</span>
+              <input type="number" name="amount" step="0.01" min="0.01" max="{{ document.balance }}" class="input text-right" value="{{ document.balance }}" data-required="Enter the amount">
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">{{#if (eq kind "invoice")}}Deposited to{{else}}Paid from{{/if}}</span>
+              <select name="cash_account" class="select" data-required="Select a cash or bank account">
+                {{#each cashAccounts}}<option value="{{ uuid }}">{{ code }} - {{ name }}</option>{{/each}}
+              </select>
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Reference</span>
+              <input type="text" name="reference" class="input" placeholder="OR / check no.">
+            </label>
+            <div class="sm:col-span-4 flex justify-end">
+              <button type="submit" class="btn btn-primary">Record payment</button>
+            </div>
+          </form>
+          {{/if}}{{/if}}
+        </div>
+      </div>
+
+      {{#if can.write}}{{#unless (eq document.status "void")}}
+      <div class="card no-print">
+        <div class="card-header">
+          <div class="card-title">Void this {{ lowercase config.label }}</div>
+          <p class="card-description">Posts a reversing entry so the ledger keeps both the original and the cancellation.{{#if document.hasPostedPayments}} Void its payments first.{{/if}}</p>
+        </div>
+        <div class="card-content">
+          <form id="voidForm" class="flex flex-wrap items-end gap-3" novalidate onsubmit="return false">
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Void date</span>
+              <input type="date" name="void_date" class="input" value="{{ defaultDate }}" min="{{ document.issueDate }}" data-required="A void date is required">
+            </label>
+            <label class="grid gap-1 text-sm grow min-w-[16rem]">
+              <span class="font-medium">Reason (optional)</span>
+              <input type="text" name="reason" class="input" maxlength="200">
+            </label>
+            <button type="button" class="btn btn-destructive" {{#if document.hasPostedPayments}}disabled{{/if}}
+              data-api-action="{{ document.voidApi }}" data-payload-from="voidForm"
+              data-confirm-heading="Void {{ document.number }}" data-confirm-content="The posting will be reversed and the document marked void. This cannot be undone."
+              data-confirm-label="Void" data-success-message="Voided" data-success-redirect="reload">Void</button>
+          </form>
+        </div>
+      </div>
+      {{/unless}}{{/if}}
+    </div>
+  </main>
+</div>
+{{> footer }}

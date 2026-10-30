@@ -1,0 +1,70 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{> pageHeading heading="Audit Log" }}
+      <div class="card">
+        <form method="GET" action="{{ urls.auditLog }}" class="card-header flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">Activity</span>
+            <select name="category" class="select">
+              <option value="">All activity</option>
+              {{#each categories}}
+              <option value="{{ value }}" {{#if selected}}selected{{/if}}>{{ label }}</option>
+              {{/each}}
+            </select>
+          </label>
+          <label class="grid gap-1 text-sm grow min-w-[16rem]">
+            <span class="font-medium">Search</span>
+            <input type="text" name="keyword" class="input" placeholder="Search description or user email" value="{{ logs.keyword }}">
+          </label>
+          <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date &amp; Time</th>
+                <th>User</th>
+                <th>Action</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each logs.items}}
+              <tr>
+                <td class="whitespace-nowrap">{{ formatDateTime createdAt }}</td>
+                <td>
+                  {{#if userEmail}}{{ userEmail }}{{else}}-{{/if}}
+                  {{#if ipAddress}}<div class="text-xs text-muted">{{ ipAddress }}</div>{{/if}}
+                </td>
+                <td class="whitespace-nowrap">
+                  <span class="badge {{#if isFailure}}badge-danger{{else}}badge-secondary{{/if}}">{{ actionLabel }}</span>
+                </td>
+                <td>
+                  {{ summary }}
+                  {{#if details}}
+                  <details class="mt-1">
+                    <summary class="text-xs text-primary cursor-pointer">Show changes</summary>
+                    <pre class="text-xs bg-gray-50 border border-border rounded p-2 mt-1 overflow-x-auto">{{ details }}</pre>
+                  </details>
+                  {{/if}}
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          {{#unless logs.items.length}}
+          <div class="flex w-full justify-center mt-2 text-sm">There is no activity to display</div>
+          {{/unless}}
+          {{> pagination}}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/journal-grid.js" defer></script>
+{{> footer }}

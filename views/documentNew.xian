@@ -1,0 +1,86 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{> pageHeading heading=(concat "New " (lowercase config.label)) backUrl=page.gridUrl }}
+      {{#unless hasContacts}}
+      <div class="notice notice-warning mb-5">Add a {{ lowercase config.contactLabel }} first: <a href="{{ page.contactNewUrl }}" class="font-semibold underline">New {{ lowercase config.contactLabel }}</a></div>
+      {{/unless}}
+      <div class="grid gap-5 grid-cols-1">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Details</div></div>
+          <div class="card-content grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <label class="grid gap-1 text-sm lg:col-span-2">
+              <span class="font-medium">{{ config.contactLabel }}</span>
+              <select class="select" data-doc-contact><option value="">Select {{ lowercase config.contactLabel }}</option></select>
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Date</span>
+              <input type="date" class="input" data-doc-issue-date>
+            </label>
+            <label class="grid gap-1 text-sm">
+              <span class="font-medium">Due date</span>
+              <input type="date" class="input" data-doc-due-date>
+            </label>
+            <label class="grid gap-1 text-sm lg:col-span-2">
+              <span class="font-medium">Reference</span>
+              <input type="text" class="input" data-doc-reference placeholder="{{#if (eq kind "bill")}}Supplier's invoice / OR number{{else}}PO number or notes{{/if}}">
+            </label>
+            <label class="grid gap-1 text-sm lg:col-span-2">
+              <span class="font-medium">Memo</span>
+              <input type="text" class="input" data-doc-memo>
+            </label>
+            <label class="flex items-center gap-2 text-sm font-medium sm:col-span-2 lg:col-span-4">
+              <input type="checkbox" data-doc-vat checked> VAT <span data-vat-rate></span>% (added on top of the amounts)
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Lines</div></div>
+          <div class="card-content overflow-x-auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="w-[28%]">Account</th>
+                  <th>Description</th>
+                  <th class="w-24 num">Qty</th>
+                  <th class="w-36 num">Unit price</th>
+                  <th class="w-36 num">Amount</th>
+                  <th class="w-10"></th>
+                </tr>
+              </thead>
+              <tbody data-doc-lines></tbody>
+              <tfoot>
+                <tr><td><button type="button" class="btn btn-outline" data-doc-add-line>Add line</button></td><td colspan="3" class="text-right">Subtotal</td><td class="num" data-doc-subtotal>0.00</td><td></td></tr>
+                <tr><td></td><td colspan="3" class="text-right">VAT</td><td class="num" data-doc-vat-amount>0.00</td><td></td></tr>
+                <tr class="report-row-grand"><td></td><td colspan="3" class="text-right">Total</td><td class="num" data-doc-total>0.00</td><td></td></tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <div class="flex border-t border-border pt-4 justify-between">
+          <a href="{{ page.gridUrl }}" class="btn btn-destructive">Cancel</a>
+          <button type="button" class="btn btn-primary" data-doc-save>Save and post</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<template id="doc-line-template">
+  <tr data-doc-line>
+    <td><select class="select px-2" data-line-account aria-label="Account"><option value="">Select account</option></select></td>
+    <td><input type="text" class="input" data-line-description aria-label="Description"></td>
+    <td><input type="number" min="0" step="0.0001" class="input text-right" value="1" data-line-quantity aria-label="Quantity"></td>
+    <td><input type="number" min="0" step="0.01" class="input text-right" data-line-price aria-label="Unit price"></td>
+    <td class="num" data-line-amount>0.00</td>
+    <td><button type="button" class="btn btn-ghost" data-line-remove aria-label="Remove line">&times;</button></td>
+  </tr>
+</template>
+<script type="application/json" id="doc-page-data">{{ json pageData }}</script>
+<script src="/js/document-form.js" defer></script>
+{{> footer }}

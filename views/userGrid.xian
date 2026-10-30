@@ -1,0 +1,38 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto space-y-5">
+      {{> pageHeading heading="Users" actionUrl=urls.userNew actionLabel="New user" }}
+      <div class="card">
+        <div class="card-content pt-5 overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th></tr></thead>
+            <tbody>
+              {{#each users}}
+              <tr>
+                <td><a href="{{ editUrl }}" class="hover:underline font-medium">{{#if fullName}}{{ fullName }}{{else}}{{ email }}{{/if}}</a></td>
+                <td>{{ email }}</td>
+                <td><span class="badge badge-info">{{ roleLabel }}</span></td>
+                <td>{{#if (eq status 1)}}<span class="badge badge-success">Active</span>{{else}}<span class="badge badge-secondary">Inactive</span>{{/if}}</td>
+                <td class="text-sm text-muted">{{ formatDateTime createdAt }}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Roles</div></div>
+        <div class="card-content">
+          <ul class="text-sm space-y-1">
+            {{#each roles}}<li><strong>{{ label }}</strong> — {{ description }}</li>{{/each}}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

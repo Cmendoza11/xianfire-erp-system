@@ -1,0 +1,91 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{> pageHeading heading="New journal entry" backUrl=urls.accountingJournalGrid }}
+      <div class="grid gap-5 grid-cols-1">
+        {{#if lockDate}}
+        <div class="notice notice-info">The books are closed through <strong>{{ lockDate }}</strong>. New entries must be dated after that.</div>
+        {{/if}}
+        <div class="card">
+          <div class="card-header"><div class="card-title">Entry Details</div></div>
+          <div class="card-content">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <label class="grid gap-1 text-sm">
+                <span class="font-medium">Date</span>
+                <input type="date" class="input" data-entry-date>
+              </label>
+              <label class="grid gap-1 text-sm">
+                <span class="font-medium">Reference No.</span>
+                <input type="text" class="input" placeholder="OR / SI / Voucher No." data-entry-reference>
+              </label>
+              <label class="grid gap-1 text-sm">
+                <span class="font-medium">Description</span>
+                <input type="text" class="input" placeholder="e.g. Recorded cash sales for the day" data-entry-description>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Journal Lines</div>
+            <p class="card-description">Each line has either a debit or a credit. Total debits must equal total credits before the entry can be posted.</p>
+          </div>
+          <div class="card-content overflow-x-auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th class="w-[35%]">Account</th>
+                  <th>Line Description</th>
+                  <th class="w-36 num">Debit</th>
+                  <th class="w-36 num">Credit</th>
+                  <th class="w-10"></th>
+                </tr>
+              </thead>
+              <tbody data-lines></tbody>
+              <tfoot>
+                <tr>
+                  <td><button type="button" class="btn btn-outline" data-add-line>Add line</button></td>
+                  <td class="text-right font-semibold">Total</td>
+                  <td class="num font-semibold" data-total-debit>0.00</td>
+                  <td class="num font-semibold" data-total-credit>0.00</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+            <div class="mt-3 text-sm font-medium" data-balance-status></div>
+          </div>
+        </div>
+
+        <div class="flex border-t border-border pt-4 justify-between">
+          <a href="{{ urls.accountingJournalGrid }}" class="btn btn-destructive">Cancel</a>
+          <button type="button" class="btn btn-primary" data-post-entry disabled>Post entry</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<template id="journal-line-template">
+  <tr data-line>
+    <td>
+      <select class="select px-2" data-line-account aria-label="Account">
+        <option value="">Select account</option>
+      </select>
+    </td>
+    <td><input type="text" class="input" data-line-description aria-label="Line description"></td>
+    <td><input type="number" min="0" step="0.01" class="input text-right" data-line-debit aria-label="Debit"></td>
+    <td><input type="number" min="0" step="0.01" class="input text-right" data-line-credit aria-label="Credit"></td>
+    <td>
+      <button type="button" class="btn btn-ghost" data-remove-line aria-label="Remove line">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>
+    </td>
+  </tr>
+</template>
+<script type="application/json" id="journal-page-data">{{ json pageData }}</script>
+<script src="/js/journal-entry.js" defer></script>
+{{> footer }}

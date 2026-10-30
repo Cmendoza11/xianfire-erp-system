@@ -1,0 +1,93 @@
+:root {
+  --primary: #008060;
+  --primary-hover: #006e52;
+  --destructive: #d72c0d;
+  --border: #e1e3e5;
+  --muted: #6d7175;
+}
+
+body { background: #f6f6f7; color: #202223; }
+
+.nav-item { display: flex; align-items: center; gap: .6rem; padding: .5rem .6rem; border-radius: .375rem; color: #202223; }
+.nav-item:hover { background: #f1f2f3; }
+.nav-group { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 1.25rem .5rem .4rem; }
+.kpi { background: #fff; border: 1px solid var(--border); border-radius: .75rem; padding: 1rem 1.25rem; }
+.kpi-label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; }
+.kpi-value { font-size: 1.5rem; font-weight: 700; margin-top: .25rem; font-variant-numeric: tabular-nums; }
+.kpi-sub { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+.bar { height: .5rem; border-radius: 9999px; }
+.nav-item.active { background: rgba(0, 128, 96, .08); color: var(--primary); font-weight: 600; }
+
+.card { background: #fff; border: 1px solid var(--border); border-radius: .75rem; box-shadow: 0 1px 2px rgba(0,0,0,.04); }
+.card-header { padding: 1rem 1.25rem; }
+.card-content { padding: 0 1.25rem 1.25rem; }
+.card-title { font-weight: 600; font-size: 1rem; }
+.card-description { color: var(--muted); font-size: .875rem; margin-top: .25rem; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; height: 2.25rem; padding: 0 1rem; border-radius: .375rem; font-size: .875rem; font-weight: 500; border: 1px solid transparent; cursor: pointer; white-space: nowrap; transition: background .15s; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:not(:disabled):hover { background: var(--primary-hover); }
+.btn-destructive { background: var(--destructive); color: #fff; }
+.btn-destructive:not(:disabled):hover { background: #bc2200; }
+.btn-outline { background: #fff; border-color: var(--border); color: #202223; }
+.btn-outline:not(:disabled):hover { background: #f6f6f7; }
+.btn-secondary { background: #f1f2f3; color: #202223; }
+.btn-ghost { background: transparent; color: #202223; padding: 0 .6rem; }
+.btn-ghost:not(:disabled):hover { background: #f1f2f3; }
+.btn-link { background: transparent; color: var(--primary); padding: 0; height: auto; }
+.btn-link:hover { text-decoration: underline; }
+.btn-lg { height: 2.75rem; padding: 0 1.5rem; }
+.btn[data-loading="true"]::before { content: ""; width: 1rem; height: 1rem; border: 2px solid currentColor; border-right-color: transparent; border-radius: 9999px; animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.input, .select, .textarea { width: 100%; border: 1px solid var(--border); border-radius: .375rem; background: #fff; font-size: .875rem; padding: 0 .75rem; height: 2.25rem; }
+.textarea { height: auto; min-height: 6rem; padding: .5rem .75rem; }
+.input:focus, .select:focus, .textarea:focus { outline: 2px solid rgba(0,128,96,.35); outline-offset: 0; border-color: var(--primary); }
+.input.invalid, .select.invalid, .textarea.invalid { border-color: var(--destructive); }
+.field-label { display: block; font-size: .875rem; font-weight: 500; margin-bottom: .3rem; }
+.field-label .required { color: var(--destructive); margin-left: .15rem; }
+.field-help { font-size: .75rem; color: var(--muted); margin-top: .25rem; }
+.field-error { font-size: .75rem; color: var(--destructive); margin-top: .25rem; }
+
+.data-table { width: 100%; font-size: .875rem; border-collapse: collapse; }
+.data-table th { text-align: left; font-weight: 500; color: var(--muted); padding: .6rem .75rem; border-bottom: 1px solid var(--border); white-space: nowrap; }
+.data-table td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.data-table tbody tr:hover { background: #fafbfb; }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table .font-mono { white-space: nowrap; }
+
+.badge { display: inline-flex; align-items: center; padding: .1rem .55rem; border-radius: 9999px; font-size: .75rem; font-weight: 500; }
+.badge-success { background: #aee9d1; color: #0d5c3f; }
+.badge-secondary { background: #e4e5e7; color: #44474a; }
+.badge-info { background: #dbeafe; color: #1e40af; }
+.badge-warning { background: #ffea8a; color: #5c4400; }
+.badge-danger { background: #fed3d1; color: #8e1f0b; }
+
+.notice { border-radius: .5rem; padding: .75rem 1rem; font-size: .875rem; border: 1px solid; }
+.notice-info { background: #eff6ff; border-color: #bfdbfe; color: #1e3a8a; }
+.notice-warning { background: #fff8db; border-color: #f1d77d; color: #5c4400; }
+
+.toast { min-width: 16rem; max-width: 24rem; padding: .75rem 1rem; border-radius: .5rem; background: #fff; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.12); font-size: .875rem; display: flex; gap: .5rem; align-items: flex-start; }
+.toast-success { border-left: 4px solid var(--primary); }
+.toast-error { border-left: 4px solid var(--destructive); }
+
+.pagination-link { min-width: 2.25rem; height: 2.25rem; display: inline-flex; align-items: center; justify-content: center; border-radius: .375rem; font-size: .875rem; padding: 0 .5rem; }
+.pagination-link:hover { background: #f1f2f3; }
+.pagination-link.active { border: 1px solid var(--border); background: #fff; font-weight: 600; }
+.pagination-link.disabled { opacity: .5; pointer-events: none; }
+
+.report-row-total td { font-weight: 600; border-top: 2px solid #202223; }
+.report-row-grand td { font-weight: 700; border-bottom: 3px double #202223; }
+.report-section td { font-weight: 600; background: #fafbfb; }
+.report-indent { padding-left: 2rem !important; }
+
+/* Reports print as a clean page: no header, sidebar, filters or buttons. */
+@media print {
+  body { background: #fff; }
+  header, nav, footer, .no-print, #toast-root { display: none !important; }
+  main { padding: 0 !important; }
+  .card { border: none; box-shadow: none; }
+  .data-table tbody tr:hover { background: none; }
+  a { color: inherit; text-decoration: none; }
+}

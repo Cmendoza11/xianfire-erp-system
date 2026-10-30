@@ -1,0 +1,61 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{#if can.write}}
+      {{> pageHeading heading="Journal Entries" actionUrl=urls.accountingJournalNew actionLabel="New journal entry" }}
+      {{else}}
+      {{> pageHeading heading="Journal Entries" }}
+      {{/if}}
+      <div class="card">
+        <div class="card-header">
+          <div class="w-80 max-w-full">
+            <input type="text" class="input" placeholder="Search description or reference" value="{{ entries.keyword }}" data-journal-search aria-label="Search description or reference">
+          </div>
+        </div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Entry No.</th>
+                <th>Date</th>
+                <th>Reference</th>
+                <th>Description</th>
+                <th class="num">Debit</th>
+                <th class="num">Credit</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each entries.items}}
+              <tr>
+                <td><a href="{{ viewUrl }}" class="hover:underline font-medium font-mono">{{ entryNumber }}</a></td>
+                <td>{{ entryDate }}</td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td>
+                  {{ description }}
+                  {{#if isClosing}}<span class="badge badge-info ml-1">Closing</span>{{/if}}
+                  {{#if isDocumentEntry}}{{#unless reversalOf}}<span class="badge badge-info ml-1">{{ entryTypeLabel }}</span>{{/unless}}{{/if}}
+                  {{#if reversalOf}}<span class="badge badge-warning ml-1">Reversal</span>{{/if}}
+                  {{#if reversedBy}}<span class="badge badge-secondary ml-1">Reversed</span>{{/if}}
+                </td>
+                <td class="num">{{ formatMoney totalDebit }}</td>
+                <td class="num">{{ formatMoney totalCredit }}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          {{#unless entries.items.length}}
+          <div class="flex w-full justify-center mt-2 text-sm">There is no journal entry to display</div>
+          {{/unless}}
+
+          {{> pagination}}
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/journal-grid.js" defer></script>
+{{> footer }}

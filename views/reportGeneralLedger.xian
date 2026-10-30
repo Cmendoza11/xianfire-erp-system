@@ -1,0 +1,91 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="General Ledger" }}
+        <form method="GET" action="{{ urls.reportGeneralLedger }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm grow min-w-[16rem]">
+            <span class="font-medium">Account</span>
+            <select name="account" class="select">
+              <option value="">Select account</option>
+              {{#each accounts}}
+              <option value="{{ uuid }}" {{#if selected}}selected{{/if}}>{{ code }} - {{ name }}</option>
+              {{/each}}
+            </select>
+          </label>
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">From</span>
+            <input type="date" name="from" class="input" value="{{ period.from }}">
+          </label>
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">To</span>
+            <input type="date" name="to" class="input" value="{{ period.to }}">
+          </label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          {{#if ledger}}<button type="button" class="btn btn-outline" data-print>Print</button>{{/if}}
+        </form>
+      </div>
+
+      {{#if ledger}}
+      <div class="card p-6">
+        {{> reportHeader reportTitle=(concat "General Ledger — " ledger.account.code " " ledger.account.name)
+            periodLabel=(concat "For the period " period.from " to " period.to) }}
+        <p class="text-sm text-muted mb-3">{{ ledger.account.typeLabel }} account · normal balance: <span class="capitalize">{{ ledger.account.normalBalance }}</span></p>
+        <div class="overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Entry No.</th>
+                <th>Reference</th>
+                <th>Description</th>
+                <th class="num">Debit</th>
+                <th class="num">Credit</th>
+                <th class="num">Balance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="report-section">
+                <td>{{ period.from }}</td>
+                <td colspan="5">Opening balance</td>
+                <td class="num">{{ formatSignedMoney ledger.openingBalance }}</td>
+              </tr>
+              {{#each ledger.lines}}
+              <tr>
+                <td>{{ entryDate }}</td>
+                <td><a href="{{ viewUrl }}" class="hover:underline font-mono">{{ entryNumber }}</a></td>
+                <td>{{#if reference}}{{ reference }}{{else}}-{{/if}}</td>
+                <td>{{ description }}</td>
+                <td class="num">{{#if (gt debit 0)}}{{ formatMoney debit }}{{/if}}</td>
+                <td class="num">{{#if (gt credit 0)}}{{ formatMoney credit }}{{/if}}</td>
+                <td class="num">{{ formatSignedMoney balance }}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="7" class="text-center text-muted">No transactions in this period</td></tr>
+              {{/each}}
+              <tr class="report-row-total">
+                <td colspan="4" class="text-right">Totals for the period</td>
+                <td class="num">{{ formatMoney ledger.totalDebit }}</td>
+                <td class="num">{{ formatMoney ledger.totalCredit }}</td>
+                <td></td>
+              </tr>
+              <tr class="report-row-grand">
+                <td>{{ period.to }}</td>
+                <td colspan="5">Closing balance</td>
+                <td class="num">{{ formatSignedMoney ledger.closingBalance }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {{else}}
+      <div class="card p-10 text-center text-muted">Select an account to view its ledger.</div>
+      {{/if}}
+    </div>
+  </main>
+</div>
+{{> footer }}

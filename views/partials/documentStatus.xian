@@ -1,0 +1,1 @@
+{{#if overdue}}<span class="badge badge-danger">Overdue</span>{{else if (eq status "paid")}}<span class="badge badge-success">Paid</span>{{else if (eq status "void")}}<span class="badge badge-secondary">Void</span>{{else}}<span class="badge badge-warning">Open</span>{{/if}}

@@ -1,0 +1,64 @@
+<nav data-nav class="hidden md:block w-60 shrink-0 bg-white border-r border-border min-h-[calc(100vh-3.5rem)] p-4 md:sticky md:top-14 md:self-start md:max-h-[calc(100vh-3.5rem)] md:overflow-y-auto">
+  <ul class="space-y-1 text-sm">
+    <li>
+      <a href="{{ urls.dashboard }}" class="nav-item {{#if (eq activeMenu "dashboard")}}active{{/if}}">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        Dashboard
+      </a>
+    </li>
+  </ul>
+
+  <div class="nav-group">Accounting</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.accountingAccountGrid }}" class="nav-item {{#if (eq activeMenu "accounts")}}active{{/if}}">Chart of Accounts</a></li>
+    <li><a href="{{ urls.accountingJournalGrid }}" class="nav-item {{#if (eq activeMenu "journal")}}active{{/if}}">Journal Entries</a></li>
+    {{#if can.write}}
+    <li><a href="{{ urls.accountingJournalNew }}" class="nav-item {{#if (eq activeMenu "journalNew")}}active{{/if}}">New Journal Entry</a></li>
+    {{/if}}
+  </ul>
+
+  <div class="nav-group">Sales</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.customerGrid }}" class="nav-item {{#if (eq activeMenu "customers")}}active{{/if}}">Customers</a></li>
+    <li><a href="{{ urls.invoiceGrid }}" class="nav-item {{#if (eq activeMenu "invoices")}}active{{/if}}">Sales Invoices</a></li>
+  </ul>
+
+  <div class="nav-group">Purchases</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.supplierGrid }}" class="nav-item {{#if (eq activeMenu "suppliers")}}active{{/if}}">Suppliers</a></li>
+    <li><a href="{{ urls.billGrid }}" class="nav-item {{#if (eq activeMenu "bills")}}active{{/if}}">Bills</a></li>
+  </ul>
+
+  <div class="nav-group">Banking</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.reconciliationGrid }}" class="nav-item {{#if (eq activeMenu "bankrec")}}active{{/if}}">Bank Reconciliation</a></li>
+  </ul>
+
+  <div class="nav-group">Financial Reports</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.reportGeneralLedger }}" class="nav-item {{#if (eq activeMenu "ledger")}}active{{/if}}">General Ledger</a></li>
+    <li><a href="{{ urls.reportTrialBalance }}" class="nav-item {{#if (eq activeMenu "trialBalance")}}active{{/if}}">Trial Balance</a></li>
+    <li><a href="{{ urls.reportIncomeStatement }}" class="nav-item {{#if (eq activeMenu "incomeStatement")}}active{{/if}}">Income Statement</a></li>
+    <li><a href="{{ urls.reportBalanceSheet }}" class="nav-item {{#if (eq activeMenu "balanceSheet")}}active{{/if}}">Balance Sheet</a></li>
+    <li><a href="{{ urls.reportCashFlow }}" class="nav-item {{#if (eq activeMenu "cashFlow")}}active{{/if}}">Cash Flow Statement</a></li>
+  </ul>
+
+  <div class="nav-group">Receivables &amp; Tax</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.reportArAging }}" class="nav-item {{#if (eq activeMenu "arAging")}}active{{/if}}">AR Aging</a></li>
+    <li><a href="{{ urls.reportApAging }}" class="nav-item {{#if (eq activeMenu "apAging")}}active{{/if}}">AP Aging</a></li>
+    <li><a href="{{ urls.reportVatSummary }}" class="nav-item {{#if (eq activeMenu "vatSummary")}}active{{/if}}">VAT Summary</a></li>
+    <li><a href="{{ urls.reportSalesBook }}" class="nav-item {{#if (eq activeMenu "salesBook")}}active{{/if}}">Sales Book</a></li>
+    <li><a href="{{ urls.reportPurchaseBook }}" class="nav-item {{#if (eq activeMenu "purchaseBook")}}active{{/if}}">Purchase Book</a></li>
+  </ul>
+
+  {{#if can.admin}}
+  <div class="nav-group">Administration</div>
+  <ul class="space-y-1 text-sm">
+    <li><a href="{{ urls.periodClosing }}" class="nav-item {{#if (eq activeMenu "periodClosing")}}active{{/if}}">Period Closing</a></li>
+    <li><a href="{{ urls.auditLog }}" class="nav-item {{#if (eq activeMenu "auditLog")}}active{{/if}}">Audit Log</a></li>
+    <li><a href="{{ urls.userGrid }}" class="nav-item {{#if (eq activeMenu "users")}}active{{/if}}">Users</a></li>
+    <li><a href="{{ urls.accountingSetting }}" class="nav-item {{#if (eq activeMenu "setting")}}active{{/if}}">Accounting Settings</a></li>
+  </ul>
+  {{/if}}
+</nav>

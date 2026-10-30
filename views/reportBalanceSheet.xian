@@ -1,0 +1,77 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="Balance Sheet" }}
+        <form method="GET" action="{{ urls.reportBalanceSheet }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm">
+            <span class="font-medium">As of</span>
+            <input type="date" name="as_of" class="input" value="{{ asOf }}">
+          </label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+
+      <div class="card p-6">
+        {{> reportHeader reportTitle="Balance Sheet" periodLabel=(concat "As of " asOf) }}
+        <table class="data-table">
+          <tbody>
+            <tr class="report-section"><td colspan="2">Assets</td></tr>
+            {{#each report.assets.accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{else}}
+            <tr><td class="report-indent text-muted" colspan="2">No assets</td></tr>
+            {{/each}}
+            <tr class="report-row-grand"><td>Total Assets</td><td class="num">{{ formatSignedMoney report.assets.total }}</td></tr>
+
+            <tr class="report-section"><td colspan="2">Liabilities</td></tr>
+            {{#each report.liabilities.accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{else}}
+            <tr><td class="report-indent text-muted" colspan="2">No liabilities</td></tr>
+            {{/each}}
+            <tr class="report-row-total"><td>Total Liabilities</td><td class="num">{{ formatSignedMoney report.liabilities.total }}</td></tr>
+
+            <tr class="report-section"><td colspan="2">Equity</td></tr>
+            {{#each report.equity.accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{/each}}
+            {{#if report.hasPriorEarnings}}
+            <tr>
+              <td class="report-indent">Net income — prior fiscal years</td>
+              <td class="num">{{ formatSignedMoney report.priorEarnings }}</td>
+            </tr>
+            {{/if}}
+            <tr>
+              <td class="report-indent">Net income — current fiscal year (from {{ report.fiscalYearStart }})</td>
+              <td class="num">{{ formatSignedMoney report.currentEarnings }}</td>
+            </tr>
+            <tr class="report-row-total"><td>Total Equity</td><td class="num">{{ formatSignedMoney report.totalEquity }}</td></tr>
+
+            <tr class="report-row-grand"><td>Total Liabilities and Equity</td><td class="num">{{ formatSignedMoney report.totalLiabilitiesAndEquity }}</td></tr>
+          </tbody>
+        </table>
+        {{#if report.balanced}}
+        <div class="mt-3 text-sm font-medium text-green-700">Balanced — Assets = Liabilities + Equity.</div>
+        {{else}}
+        <div class="mt-3 text-sm font-medium text-destructive">Out of balance by {{ formatMoney report.difference }}</div>
+        {{/if}}
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

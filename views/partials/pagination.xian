@@ -1,0 +1,22 @@
+<div class="pagination flex w-full mt-3 no-print">
+  <div class="flex flex-wrap justify-between w-full gap-2">
+    <div class="flex items-center">
+      <span class="btn btn-outline rounded-r-none">Show</span>
+      <select class="select w-20 rounded-l-none border-l-0" data-page-limit aria-label="Limit">
+        {{#if pagination.limitIsCustom}}<option value="{{ pagination.limit }}" selected>{{ pagination.limit }}</option>{{/if}}
+        {{#each pagination.limits}}
+        <option value="{{ value }}" {{#if selected}}selected{{/if}}>{{ value }}</option>
+        {{/each}}
+      </select>
+    </div>
+    <nav class="flex items-center gap-1" aria-label="Pagination">
+      <a href="#" data-page="{{ pagination.prevPage }}" class="pagination-link {{#unless pagination.hasPrev}}disabled{{/unless}}">&lsaquo; Previous</a>
+      {{#if pagination.showFirst}}<a href="#" data-page="1" class="pagination-link">1</a>{{/if}}
+      {{#if pagination.showLeadingEllipsis}}<span class="pagination-link">&hellip;</span>{{/if}}
+      <span class="pagination-link active" aria-current="page">{{ pagination.page }}</span>
+      {{#if pagination.showTrailingEllipsis}}<span class="pagination-link">&hellip;</span>{{/if}}
+      {{#if pagination.showLast}}<a href="#" data-page="{{ pagination.lastPage }}" class="pagination-link">{{ pagination.lastPage }}</a>{{/if}}
+      <a href="#" data-page="{{ pagination.nextPage }}" class="pagination-link {{#unless pagination.hasNext}}disabled{{/unless}}">Next &rsaquo;</a>
+    </nav>
+  </div>
+</div>

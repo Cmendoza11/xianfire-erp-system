@@ -1,0 +1,88 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      {{#if account}}
+      {{> pageHeading heading=(concat "Editing " account.code " - " account.name) backUrl=urls.accountingAccountGrid }}
+      {{else}}
+      {{> pageHeading heading="Create a new account" backUrl=urls.accountingAccountGrid }}
+      {{/if}}
+      <form id="accountingAccountForm" method="POST" action="{{ form.action }}" novalidate
+        data-json-form data-method="{{ form.method }}"
+        data-mode="{{#if account}}edit{{else}}new{{/if}}" data-grid-url="{{ urls.accountingAccountGrid }}">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Account Information</div>
+            <p class="card-description">Assets and expenses normally carry a debit balance. Liabilities, equity and revenue normally carry a credit balance.</p>
+          </div>
+          <div class="card-content">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="field-label" for="code">Account Code<span class="required">*</span></label>
+                <input id="code" name="code" class="input" placeholder="1000" value="{{ values.code }}" data-required="Account code is required">
+              </div>
+              <div>
+                <label class="field-label" for="name">Account Name<span class="required">*</span></label>
+                <input id="name" name="name" class="input" placeholder="Cash on Hand" value="{{ values.name }}" data-required="Account name is required">
+              </div>
+              <div>
+                <label class="field-label" for="type">Account Type<span class="required">*</span></label>
+                <select id="type" name="type" class="select" data-account-type>
+                  {{#each types}}
+                  <option value="{{ value }}" data-normal-balance="{{ normalBalance }}" {{#if (eq value @root.values.type)}}selected{{/if}}>{{ label }}</option>
+                  {{/each}}
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="normal_balance">Normal Balance<span class="required">*</span></label>
+                <select id="normal_balance" name="normal_balance" class="select">
+                  <option value="debit" {{#if (eq values.normalBalance "debit")}}selected{{/if}}>Debit</option>
+                  <option value="credit" {{#if (eq values.normalBalance "credit")}}selected{{/if}}>Credit</option>
+                </select>
+                <p class="field-help">Change only for contra accounts</p>
+              </div>
+              <div>
+                <label class="field-label" for="status">Status</label>
+                <select id="status" name="status" class="select">
+                  <option value="1" {{#if (eq values.status "1")}}selected{{/if}}>Active</option>
+                  <option value="0" {{#if (eq values.status "0")}}selected{{/if}}>Inactive</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="cash_flow_category">Cash Flow Category</label>
+                <select id="cash_flow_category" name="cash_flow_category" class="select">
+                  {{#each cashFlowCategories}}
+                  <option value="{{ value }}" {{#if (eq value @root.values.cashFlowCategory)}}selected{{/if}}>{{ label }}</option>
+                  {{/each}}
+                </select>
+                <p class="field-help">Where cash paid or received for this account appears on the cash flow statement</p>
+              </div>
+              <div class="sm:col-span-2">
+                {{!-- The hidden 0 is sent when the box is unticked; a ticked box overrides it with 1. --}}
+                <input type="hidden" name="is_cash" value="0">
+                <label class="flex items-center gap-2 text-sm font-medium">
+                  <input type="checkbox" name="is_cash" value="1" {{#if values.isCash}}checked{{/if}}>
+                  Cash or bank account
+                </label>
+                <p class="field-help">Ticked accounts can receive and pay invoices, are reconciled against bank statements and make up cash on the cash flow statement. Asset accounts only.</p>
+              </div>
+            </div>
+            <div class="mt-4">
+              <label class="field-label" for="description">Description</label>
+              <textarea id="description" name="description" class="textarea">{{ values.description }}</textarea>
+            </div>
+          </div>
+        </div>
+        <div class="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+          <a href="{{ urls.accountingAccountGrid }}" class="btn btn-destructive">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="/js/account-form.js" defer></script>
+{{> footer }}

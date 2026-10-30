@@ -1,0 +1,35 @@
+{{> head}}
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="card w-full max-w-sm p-6">
+      <div class="flex items-center justify-center mb-7">
+        {{> logo class="w-[60px] h-auto" }}
+      </div>
+      <div id="login-error" class="text-destructive py-2 text-sm hidden" role="alert"></div>
+      <form id="adminLoginForm" class="space-y-3" method="POST" action="{{ urls.adminLoginJson }}" novalidate
+        data-json-form data-custom-error data-redirect="{{ urls.dashboard }}">
+        <div>
+          <label class="field-label" for="email">Email<span class="required">*</span></label>
+          <div class="relative">
+            <svg class="w-5 h-5 absolute left-2.5 top-2 text-muted pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            <input id="email" name="email" type="email" class="input pl-10" placeholder="Email" autocomplete="username" data-required="Email is required">
+          </div>
+        </div>
+        <div>
+          <label class="field-label" for="password">Password<span class="required">*</span></label>
+          <div class="relative">
+            <svg class="w-5 h-5 absolute left-2.5 top-2 text-muted pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="16" r="1"/><rect x="3" y="10" width="18" height="12" rx="2"/><path d="M7 10V7a5 5 0 0 1 9.33-2.5"/></svg>
+            <input id="password" name="password" type="password" class="input pl-10 pr-10" placeholder="Password" autocomplete="current-password" data-required="Password is required">
+            <button type="button" class="absolute right-2 top-1.5 p-1 text-muted hover:text-gray-800" data-toggle-password aria-label="Show password">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M2.06 12.35a1 1 0 0 1 0-.7 10.75 10.75 0 0 1 19.88 0 1 1 0 0 1 0 .7 10.75 10.75 0 0 1-19.88 0"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+          <button type="submit" class="btn btn-primary btn-lg uppercase">Sign In</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="/js/login.js" defer></script>
+{{> footer }}

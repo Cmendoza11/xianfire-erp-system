@@ -1,0 +1,6 @@
+<footer class="mt-8 py-4 text-center text-gray-500 text-sm">
+  &copy; 2026 XianFire Framework — Built with ❤️ at Mindoro State University
+</footer>
+<div id="toast-root" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
+</body>
+</html>

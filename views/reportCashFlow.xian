@@ -1,0 +1,48 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="Cash Flow Statement" }}
+        <form method="GET" action="{{ urls.reportCashFlow }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm"><span class="font-medium">From</span><input type="date" name="from" class="input" value="{{ period.from }}"></label>
+          <label class="grid gap-1 text-sm"><span class="font-medium">To</span><input type="date" name="to" class="input" value="{{ period.to }}"></label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+      <div class="card p-6">
+        {{> reportHeader reportTitle="Statement of Cash Flows" periodLabel=(concat "For the period " period.from " to " period.to) }}
+        <table class="data-table">
+          <tbody>
+            {{#each report.sections}}
+            <tr class="report-section"><td colspan="2">Cash flows from {{ lowercase label }}</td></tr>
+            {{#each accounts}}
+            <tr>
+              <td class="report-indent"><a href="{{ ledgerUrl }}" class="hover:underline">{{ code }} - {{ name }}</a></td>
+              <td class="num">{{ formatSignedMoney amount }}</td>
+            </tr>
+            {{else}}
+            <tr><td class="report-indent text-muted" colspan="2">None</td></tr>
+            {{/each}}
+            <tr class="report-row-total"><td>Net cash from {{ lowercase label }}</td><td class="num">{{ formatSignedMoney total }}</td></tr>
+            {{/each}}
+            <tr class="report-row-total"><td>Net increase (decrease) in cash</td><td class="num">{{ formatSignedMoney report.netChange }}</td></tr>
+            <tr><td>Cash at the beginning of the period</td><td class="num">{{ formatSignedMoney report.openingCash }}</td></tr>
+            <tr class="report-row-grand"><td>Cash at the end of the period</td><td class="num">{{ formatSignedMoney report.closingCash }}</td></tr>
+          </tbody>
+        </table>
+        {{#if report.balanced}}
+        <div class="mt-3 text-sm font-medium text-green-700">Reconciled: beginning cash + net change = ending cash.</div>
+        {{else}}
+        <div class="mt-3 text-sm font-medium text-destructive">Does not reconcile by {{ formatMoney report.difference }}</div>
+        {{/if}}
+        <p class="text-xs text-muted mt-2 no-print">Direct method. Each account's cash flow category is set in the Chart of Accounts; cash and bank accounts are the ones marked "Cash or bank account".</p>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

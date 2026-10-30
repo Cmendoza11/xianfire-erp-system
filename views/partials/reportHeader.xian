@@ -1,0 +1,12 @@
+<div class="text-center mb-6">
+  {{#if company.name}}
+  <div class="text-lg font-semibold">{{ company.name }}</div>
+  {{else}}
+  <div class="text-sm text-muted no-print">Set your company name in <a href="{{ urls.accountingSetting }}" class="text-primary hover:underline">Accounting Settings</a></div>
+  {{/if}}
+  {{#if company.address}}<div class="text-sm text-muted whitespace-pre-line">{{ company.address }}</div>{{/if}}
+  {{#if company.tin}}<div class="text-sm text-muted">TIN: {{ company.tin }}</div>{{/if}}
+  <div class="text-xl font-bold mt-3">{{ reportTitle }}</div>
+  <div class="text-sm text-muted">{{ periodLabel }}</div>
+  <div class="text-xs text-muted mt-1">Amounts in {{ company.currency }}</div>
+</div>

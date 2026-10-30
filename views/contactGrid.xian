@@ -1,0 +1,56 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{#if can.write}}
+      {{> pageHeading heading=typeInfo.plural actionUrl=page.newUrl actionLabel=(concat "New " typeInfo.label) }}
+      {{else}}
+      {{> pageHeading heading=typeInfo.plural }}
+      {{/if}}
+      <div class="card">
+        <div class="card-content pt-5 overflow-x-auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>TIN</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th class="num">Open</th>
+                <th class="num">Outstanding</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each contacts}}
+              <tr>
+                <td class="font-medium">{{#if @root.can.write}}<a href="{{ editUrl }}" class="hover:underline">{{ name }}</a>{{else}}{{ name }}{{/if}}</td>
+                <td>{{#if tin}}{{ tin }}{{else}}-{{/if}}</td>
+                <td>{{#if email}}{{ email }}{{else}}-{{/if}}</td>
+                <td>{{#if phone}}{{ phone }}{{else}}-{{/if}}</td>
+                <td class="num">{{ openDocuments }}</td>
+                <td class="num">{{ formatMoney outstanding }}</td>
+                <td>{{#if (eq status 1)}}<span class="badge badge-success">Active</span>{{else}}<span class="badge badge-secondary">Inactive</span>{{/if}}</td>
+                <td class="text-right">
+                  {{#if @root.can.write}}
+                  <button type="button" class="btn btn-link" data-api-action="{{ deleteApi }}" data-method="DELETE"
+                    data-confirm-heading="Delete {{ name }}" data-confirm-content="This removes the contact. Contacts with invoices or bills cannot be deleted."
+                    data-confirm-label="Delete" data-success-message="Deleted" data-success-redirect="reload">Delete</button>
+                  {{/if}}
+                </td>
+              </tr>
+              {{else}}
+              <tr><td colspan="8" class="text-center text-muted">There is no {{ lowercase typeInfo.label }} yet</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

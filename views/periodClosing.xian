@@ -1,0 +1,85 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto">
+      {{> pageHeading heading="Period Closing" }}
+      <div class="grid gap-5 grid-cols-1">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              {{#if lockDate}}Books are closed through {{ lockDate }}{{else}}No fiscal year has been closed yet{{/if}}
+            </div>
+            <p class="card-description">
+              Closing a fiscal year posts a closing entry that moves every revenue and expense balance into retained earnings,
+              then locks the year: entries dated in a closed year can no longer be posted, deleted or reversed into it.
+              Close years in order, oldest first. Only the most recent closed year can be reopened.
+            </p>
+          </div>
+          <div class="card-content">
+            <label class="grid gap-1 text-sm max-w-md">
+              <span class="font-medium">Retained earnings account</span>
+              <select class="select" data-retained-earnings>
+                {{#each equityAccounts}}
+                <option value="{{ uuid }}" {{#if selected}}selected{{/if}}>{{ label }}</option>
+                {{/each}}
+              </select>
+              <span class="field-help">Net income or loss of the closed year is posted here.</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-content pt-5 overflow-x-auto">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Fiscal Year</th>
+                  <th>Period</th>
+                  <th class="num">Net Income</th>
+                  <th>Status</th>
+                  <th>Closing Entry</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each years}}
+                <tr>
+                  <td class="font-medium">{{ label }}</td>
+                  <td>{{ start }} to {{ end }}</td>
+                  <td class="num">{{ formatSignedMoney netIncome }}</td>
+                  <td>
+                    {{#if (eq status "closed")}}
+                      <span class="badge badge-secondary">Closed</span>
+                      <div class="text-xs text-muted mt-1">{{#if closedBy}}by {{ closedBy }} · {{/if}}{{ formatDateTime closedAt }}</div>
+                    {{else if (eq status "open")}}
+                      <span class="badge badge-warning">Ended, not closed</span>
+                    {{else}}
+                      <span class="badge badge-success">Current year</span>
+                    {{/if}}
+                  </td>
+                  <td>
+                    {{#if closingEntry}}<a href="{{ closingEntry.url }}" class="hover:underline font-mono">{{ closingEntry.number }}</a>{{else}}-{{/if}}
+                  </td>
+                  <td class="text-right whitespace-nowrap">
+                    {{#if canClose}}
+                    <button type="button" class="btn btn-primary" data-close-year="{{ start }}" data-label="{{ label }}" data-end="{{ end }}">Close {{ label }}</button>
+                    {{/if}}
+                    {{#if canReopen}}
+                    <button type="button" class="btn btn-outline" data-reopen-year="{{ start }}" data-label="{{ label }}">Reopen</button>
+                    {{/if}}
+                  </td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="/js/period-closing.js" defer data-close-api="{{ urls.closePeriod }}" data-reopen-api="{{ urls.reopenPeriod }}"></script>
+{{> footer }}

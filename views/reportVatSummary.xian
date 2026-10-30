@@ -1,0 +1,44 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[60rem] mx-auto">
+      <div class="no-print">
+        {{> pageHeading heading="VAT Summary" }}
+        <form method="GET" action="{{ urls.reportVatSummary }}" class="card p-4 mb-5 flex flex-wrap items-end gap-3">
+          <label class="grid gap-1 text-sm"><span class="font-medium">From</span><input type="date" name="from" class="input" value="{{ period.from }}"></label>
+          <label class="grid gap-1 text-sm"><span class="font-medium">To</span><input type="date" name="to" class="input" value="{{ period.to }}"></label>
+          <button type="submit" class="btn btn-primary">Generate</button>
+          <button type="button" class="btn btn-outline" data-print>Print</button>
+        </form>
+      </div>
+      <div class="card p-6">
+        {{> reportHeader reportTitle="VAT Summary" periodLabel=(concat "For the period " period.from " to " period.to) }}
+        <table class="data-table">
+          <tbody>
+            <tr class="report-section"><td colspan="2">Sales</td></tr>
+            <tr><td class="report-indent">VATable sales</td><td class="num">{{ formatMoney report.vatableSales }}</td></tr>
+            <tr><td class="report-indent">Sales without VAT (exempt / zero-rated)</td><td class="num">{{ formatMoney report.nonVatSales }}</td></tr>
+            <tr class="report-row-total"><td>Total sales</td><td class="num">{{ formatMoney report.totalSales }}</td></tr>
+            <tr><td class="report-indent">Output VAT ({{ report.outputVatAccount }})</td><td class="num">{{ formatSignedMoney report.outputVat }}</td></tr>
+
+            <tr class="report-section"><td colspan="2">Purchases</td></tr>
+            <tr><td class="report-indent">VATable purchases</td><td class="num">{{ formatMoney report.vatablePurchases }}</td></tr>
+            <tr><td class="report-indent">Purchases without VAT</td><td class="num">{{ formatMoney report.nonVatPurchases }}</td></tr>
+            <tr class="report-row-total"><td>Total purchases</td><td class="num">{{ formatMoney report.totalPurchases }}</td></tr>
+            <tr><td class="report-indent">Input VAT ({{ report.inputVatAccount }})</td><td class="num">{{ formatSignedMoney report.inputVat }}</td></tr>
+
+            <tr class="report-row-grand">
+              <td>{{#if report.isExcessInput}}Excess input VAT (carry over){{else}}VAT payable{{/if}}</td>
+              <td class="num">{{ formatSignedMoney report.vatPayable }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-xs text-muted mt-3">Output and input VAT come from the ledger, so manual adjustments are included. Sales and purchase bases come from invoices and bills issued in the period (void ones excluded). Use it as the working paper for BIR Form 2550Q.</p>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

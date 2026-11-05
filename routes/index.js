@@ -26,7 +26,7 @@
 import express from "express";
 import { homePage } from "../controllers/homeController.js";
 import { dashboardPage } from "../controllers/dashboardController.js";
-import { loginPage, loginUser, logoutUser } from "../controllers/authController.js";
+import { loginPage, loginUser, logoutUser, signupPage, signupUser } from "../controllers/authController.js";
 import {
   accountGrid, accountNew, accountEdit, createAccount, updateAccount, deleteAccount
 } from "../controllers/accountController.js";
@@ -74,6 +74,8 @@ router.get("/", homePage);
 // Auth
 router.get("/admin/login", loginPage);
 router.post("/admin/user/login", requireJson, h(loginUser));
+router.get("/admin/signup", signupPage);
+router.post("/admin/user/signup", requireJson, h(signupUser));
 router.get("/admin/user/logout", h(logoutUser));
 router.post("/admin/user/logout", h(logoutUser));
 router.get("/admin/account/password", read, changePasswordPage);

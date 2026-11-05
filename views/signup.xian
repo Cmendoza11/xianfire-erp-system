@@ -1,0 +1,37 @@
+{{> head}}
+<body class="bg-gray-50">
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div class="card w-full max-w-sm p-6">
+      <div class="flex items-center justify-center mb-4">
+        {{> logo class="w-[60px] h-auto" }}
+      </div>
+      <h1 class="text-lg font-semibold text-center mb-5">Create an account</h1>
+      <div id="signup-error" class="text-destructive py-2 text-sm hidden" role="alert"></div>
+      <form id="adminSignupForm" class="space-y-3" method="POST" action="{{ urls.adminSignupJson }}" novalidate
+        data-json-form data-custom-error data-redirect="{{ urls.dashboard }}">
+        <div>
+          <label class="field-label" for="full_name">Full name<span class="required">*</span></label>
+          <input id="full_name" name="full_name" type="text" class="input" placeholder="Juan Dela Cruz" autocomplete="name" data-required="Full name is required">
+        </div>
+        <div>
+          <label class="field-label" for="email">Email<span class="required">*</span></label>
+          <input id="email" name="email" type="email" class="input" placeholder="you@example.com" autocomplete="username" data-required="Email is required">
+        </div>
+        <div>
+          <label class="field-label" for="password">Password<span class="required">*</span></label>
+          <input id="password" name="password" type="password" class="input" autocomplete="new-password" data-required="Password is required">
+          <p class="field-help">At least {{ minPasswordLength }} characters</p>
+        </div>
+        <div>
+          <label class="field-label" for="confirm_password">Confirm password<span class="required">*</span></label>
+          <input id="confirm_password" name="confirm_password" type="password" class="input" autocomplete="new-password" data-required="Confirm your password">
+        </div>
+        <div class="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+          <button type="submit" class="btn btn-primary btn-lg uppercase">Sign Up</button>
+        </div>
+      </form>
+      <p class="text-sm text-muted mt-4">Already have an account? <a href="{{ urls.adminLogin }}" class="text-primary font-medium hover:underline">Sign in</a></p>
+    </div>
+  </div>
+  <script src="/js/signup.js" defer></script>
+{{> footer }}

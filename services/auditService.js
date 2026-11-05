@@ -18,6 +18,7 @@ const ACTION_LABELS = {
   "auth.login": "Logged in",
   "auth.login_failed": "Failed login",
   "auth.logout": "Logged out",
+  "auth.signup": "Signed up",
   "account.create": "Created account",
   "account.update": "Updated account",
   "account.delete": "Deleted account",

@@ -4,6 +4,8 @@ export const urls = {
   dashboard: "/admin",
   adminLogin: "/admin/login",
   adminLoginJson: "/admin/user/login",
+  adminSignup: "/admin/signup",
+  adminSignupJson: "/admin/user/signup",
   adminLogoutJson: "/admin/user/logout",
 
   accountingAccountGrid: "/admin/accounting/accounts",

@@ -29,6 +29,9 @@
           <button type="submit" class="btn btn-primary btn-lg uppercase">Sign In</button>
         </div>
       </form>
+      {{#if signupEnabled}}
+      <p class="text-sm text-muted mt-4">No account yet? <a href="{{ urls.adminSignup }}" class="text-primary font-medium hover:underline">Create an account</a></p>
+      {{/if}}
     </div>
   </div>
   <script src="/js/login.js" defer></script>

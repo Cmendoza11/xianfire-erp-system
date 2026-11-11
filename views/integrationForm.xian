@@ -1,0 +1,113 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[50rem] mx-auto space-y-4">
+      {{#if client}}
+      {{> pageHeading heading=(concat "Edit " client.name) backUrl=urls.integrationGrid }}
+      {{else}}
+      {{> pageHeading heading="New integration" backUrl=urls.integrationGrid }}
+      {{/if}}
+
+      {{!-- Filled in by integration.js after a key is generated; the key is shown only this once. --}}
+      <div id="apiKeyPanel" class="card hidden border-2 border-primary">
+        <div class="card-header">
+          <div class="card-title">Copy the API key now</div>
+          <p class="card-description">It is shown only once. If it is lost, generate a new key.</p>
+        </div>
+        <div class="card-content space-y-3">
+          <div class="flex gap-2">
+            <input id="apiKeyValue" class="input font-mono text-sm" readonly>
+            <button type="button" class="btn btn-secondary" data-copy-key>Copy</button>
+          </div>
+          <p class="text-sm">Give this key and the base URL <code class="font-mono bg-gray-100 px-1 rounded">{{ apiBaseUrl }}</code> to the team of that system.</p>
+          <a href="{{ urls.integrationGrid }}" class="btn btn-primary">Done</a>
+        </div>
+      </div>
+
+      <form id="integrationForm" method="POST" action="{{ form.action }}" novalidate data-json-form data-method="{{ form.method }}"
+        {{#if client}}data-success-message="Integration saved"{{/if}}>
+        <div class="card">
+          <div class="card-content pt-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="field-label" for="name">System name<span class="required">*</span></label>
+              <input id="name" name="name" class="input" value="{{ client.name }}" placeholder="Inventory System"
+                data-required="System name is required" data-maxlength="100" data-maxlength-message="At most 100 characters">
+            </div>
+            <div>
+              <label class="field-label" for="system_code">System code{{#unless client}}<span class="required">*</span>{{/unless}}</label>
+              {{#if client}}
+              <input id="system_code" class="input bg-gray-50 font-mono" value="{{ client.systemCode }}" disabled>
+              {{else}}
+              <input id="system_code" name="system_code" class="input font-mono" placeholder="inventory" autocomplete="off"
+                data-required="System code is required">
+              {{/if}}
+              <p class="field-help">Lowercase letters, digits, - or _. Shown in the audit log as api:&lt;code&gt;.</p>
+            </div>
+            {{#if client}}
+            <div>
+              <label class="field-label" for="status">Status</label>
+              <select id="status" name="status" class="select">
+                <option value="1" {{#if (eq client.status 1)}}selected{{/if}}>Active</option>
+                <option value="0" {{#if (eq client.status 0)}}selected{{/if}}>Revoked (key stops working)</option>
+              </select>
+            </div>
+            <div>
+              <span class="field-label">API key</span>
+              <p class="font-mono text-sm py-2">xfk_{{ client.keyPrefix }}_••••••••</p>
+            </div>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <div class="card-title">Permissions</div>
+            <p class="card-description">Grant only what this system needs. Every rule of the ledger (balanced entries, closed periods, inactive accounts) still applies.</p>
+          </div>
+          <div class="card-content space-y-3">
+            {{#each scopes}}
+            <div>
+              {{#if locked}}
+              <input type="hidden" name="scope_{{ value }}" value="1">
+              <label class="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" checked disabled> {{ label }}
+              </label>
+              {{else}}
+              {{!-- The hidden 0 is sent when the box is unticked; a ticked box overrides it with 1. --}}
+              <input type="hidden" name="scope_{{ value }}" value="0">
+              <label class="flex items-center gap-2 text-sm font-medium">
+                <input type="checkbox" name="scope_{{ value }}" value="1" {{#if checked}}checked{{/if}}> {{ label }}
+                <code class="font-mono text-xs text-muted">{{ value }}</code>
+              </label>
+              {{/if}}
+              <p class="field-help ml-6">{{ description }}</p>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <div class="form-submit-button flex border-t border-border mt-4 pt-4 justify-between">
+          <a href="{{ urls.integrationGrid }}" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="btn btn-primary">{{#if client}}Save{{else}}Create and show key{{/if}}</button>
+        </div>
+      </form>
+
+      {{#if client}}
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Replace API key</div>
+          <p class="card-description">Use this if the key was lost or exposed. The current key stops working immediately.</p>
+        </div>
+        <div class="card-content">
+          <button type="button" class="btn btn-destructive" data-rotate-key="{{ client.rotateKeyApi }}">Generate new key</button>
+        </div>
+      </div>
+      {{/if}}
+    </div>
+  </main>
+</div>
+{{> footer }}
+<script src="/js/integration.js" defer></script>

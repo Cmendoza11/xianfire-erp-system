@@ -26,6 +26,7 @@
 import express from "express";
 import { homePage } from "../controllers/homeController.js";
 import { dashboardPage } from "../controllers/dashboardController.js";
+import { enterpriseOverviewPage } from "../controllers/enterpriseController.js";
 import { loginPage, loginUser, logoutUser, signupPage, signupUser } from "../controllers/authController.js";
 import {
   accountGrid, accountNew, accountEdit, createAccount, updateAccount, deleteAccount
@@ -52,6 +53,11 @@ import {
 import {
   generalLedger, trialBalance, incomeStatement, balanceSheet, cashFlow, aging, vatSummary, documentBook
 } from "../controllers/reportController.js";
+import {
+  integrationGrid, integrationNew, integrationEdit, createIntegration, updateIntegration, rotateIntegrationKey
+} from "../controllers/integrationController.js";
+import apiV1Router from "./apiV1.js";
+import { urls } from "./urls.js";
 import {
   requireAdmin, requireAdminApi, requireJson, requireRole, requireRoleApi, WRITE_ROLES
 } from "../middleware/auth.js";
@@ -83,6 +89,7 @@ router.post("/api/account/password", requireAdminApi, requireJson, h(changePassw
 
 // Dashboard and accounting
 router.get("/admin", read, h(dashboardPage));
+router.get(urls.enterpriseOverview, read, h(enterpriseOverviewPage));
 router.get("/admin/accounting/accounts", read, h(accountGrid));
 router.get("/admin/accounting/accounts/new", write, accountNew);
 router.get("/admin/accounting/accounts/edit/:id", write, h(accountEdit));
@@ -127,6 +134,9 @@ router.get("/admin/audit-log", admin, h(auditLogPage));
 router.get("/admin/users", admin, h(userGrid));
 router.get("/admin/users/new", admin, userNew);
 router.get("/admin/users/edit/:id", admin, h(userEdit));
+router.get("/admin/integrations", admin, h(integrationGrid));
+router.get("/admin/integrations/new", admin, integrationNew);
+router.get("/admin/integrations/edit/:id", admin, h(integrationEdit));
 
 // JSON API
 router.post("/api/accounting/accounts", ...writeJsonApi, h(createAccount));
@@ -153,5 +163,11 @@ router.post("/api/accounting/periods/reopen", ...adminJsonApi, h(reopenPeriod));
 router.post("/api/settings", ...adminJsonApi, h(saveSetting));
 router.post("/api/users", ...adminJsonApi, h(createUser));
 router.patch("/api/users/:id", ...adminJsonApi, h(updateUser));
+router.post("/api/integrations", ...adminJsonApi, h(createIntegration));
+router.patch("/api/integrations/:id", ...adminJsonApi, h(updateIntegration));
+router.post("/api/integrations/:id/rotate-key", ...adminJsonApi, h(rotateIntegrationKey));
+
+// ERP integration API for the other systems; API key auth, separate from the admin session.
+router.use(urls.apiV1, apiV1Router);
 
 export default router;

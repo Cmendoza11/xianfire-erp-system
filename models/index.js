@@ -12,6 +12,8 @@ import { Invoice } from "./Invoice.js";
 import { InvoiceLine } from "./InvoiceLine.js";
 import { Payment } from "./Payment.js";
 import { BankReconciliation } from "./BankReconciliation.js";
+import { ApiClient } from "./ApiClient.js";
+import { IntegrationReference } from "./IntegrationReference.js";
 
 JournalEntry.hasMany(JournalLine, { foreignKey: "journal_entry_id", as: "lines", onDelete: "CASCADE" });
 JournalLine.belongsTo(JournalEntry, { foreignKey: "journal_entry_id", onDelete: "CASCADE" });
@@ -42,7 +44,11 @@ Payment.belongsTo(JournalEntry, { foreignKey: "void_entry_id", as: "voidEntry", 
 BankReconciliation.belongsTo(Account, { foreignKey: "account_id", as: "account", onDelete: "RESTRICT" });
 JournalLine.belongsTo(BankReconciliation, { foreignKey: "cleared_reconciliation_id", onDelete: "SET NULL" });
 
+// ERP integrations: API clients are revoked, never deleted, so their external id mappings stay valid.
+IntegrationReference.belongsTo(ApiClient, { foreignKey: "api_client_id", onDelete: "RESTRICT" });
+ApiClient.hasMany(IntegrationReference, { foreignKey: "api_client_id", onDelete: "RESTRICT" });
+
 export {
   sequelize, AdminUser, Account, JournalEntry, JournalLine, Setting, Migration, PeriodClose, AuditLog,
-  Contact, Invoice, InvoiceLine, Payment, BankReconciliation
+  Contact, Invoice, InvoiceLine, Payment, BankReconciliation, ApiClient, IntegrationReference
 };

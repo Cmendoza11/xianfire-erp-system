@@ -34,6 +34,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import { registerHelpers } from "./helpers/handlebars.js";
 import { loadAdminUser } from "./middleware/auth.js";
+import { erpModules } from "./middleware/erpModules.js";
 import { notFoundPage } from "./controllers/homeController.js";
 import { urls } from "./routes/urls.js";
 
@@ -52,7 +53,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
+// Own cookie name: the 5 ERP modules share localhost, and cookies are not separated by port.
 app.use(session({
+  name: "xf_erp.sid",
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -106,6 +109,7 @@ fs.readdir(partialsDir, (err, files) => {
 });
 
 app.use(loadAdminUser);
+app.use(erpModules);
 app.use("/", router);
 app.use(notFoundPage);
 

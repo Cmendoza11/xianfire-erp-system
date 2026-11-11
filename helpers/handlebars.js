@@ -22,7 +22,19 @@ export function formatDateTime(value) {
   return Number.isNaN(d.getTime()) ? "" : dateTimeFormatter.format(d);
 }
 
+// Which sidebar section each page opens; a page not listed opens the dashboard section.
+const NAV_SECTIONS = {
+  accounts: "accounting", journal: "accounting", journalNew: "accounting",
+  customers: "sales", invoices: "sales",
+  suppliers: "purchases", bills: "purchases",
+  bankrec: "banking",
+  ledger: "reports", trialBalance: "reports", incomeStatement: "reports", balanceSheet: "reports", cashFlow: "reports",
+  arAging: "reports", apAging: "reports", vatSummary: "reports", salesBook: "reports", purchaseBook: "reports",
+  periodClosing: "admin", auditLog: "admin", users: "admin", integrations: "admin", setting: "admin"
+};
+
 export function registerHelpers() {
+  hbs.registerHelper("navSection", (activeMenu) => NAV_SECTIONS[activeMenu] ?? "home");
   hbs.registerHelper("formatDateTime", formatDateTime);
   hbs.registerHelper("formatMoney", formatMoney);
   hbs.registerHelper("formatSignedMoney", formatSignedMoney);

@@ -3,16 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // Applied before first paint so a dark theme never flashes light; public/js/admin.js handles switching.
+    (function () {
+      var choice = "system";
+      try { choice = localStorage.getItem("xf-theme") || "system"; } catch (e) {}
+      var dark = choice === "dark" || (choice === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
+    // Colours read the theme channels in admin.css, so utilities such as text-muted follow light and dark.
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: "#008060",
-            destructive: "#d72c0d",
-            border: "#e1e3e5",
-            muted: "#6d7175"
+            primary: "rgb(var(--tw-primary) / <alpha-value>)",
+            destructive: "rgb(var(--tw-destructive) / <alpha-value>)",
+            border: "rgb(var(--tw-border) / <alpha-value>)",
+            muted: "rgb(var(--tw-muted) / <alpha-value>)",
+            ink: "rgb(var(--tw-ink) / <alpha-value>)"
           }
         }
       }

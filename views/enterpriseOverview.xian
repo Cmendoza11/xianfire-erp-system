@@ -1,0 +1,161 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto space-y-4">
+      <div class="flex flex-wrap items-end justify-between gap-4 pb-2">
+        <div class="flex-1 basis-80 min-w-0">
+          <h1 class="text-[1.375rem] font-semibold tracking-tight">Enterprise Overview</h1>
+          <p class="text-[13px] text-muted mt-0.5">{{#if company}}{{ company }} · {{/if}}Live figures from all 5 DJ's ERP modules, read from the shared database · {{ currency }}</p>
+        </div>
+      </div>
+
+      {{#if overview.attention}}
+      <div class="notice notice-warning">{{ overview.attention }} record(s) between modules need attention: waiting ones retry automatically, failed ones need a fix in the module that sent them. See Integration status below.</div>
+      {{/if}}
+
+      <section class="card metric-band" aria-label="Key figures">
+        <div class="metric">
+          <div class="metric-label">POS sales today</div>
+          <div class="metric-value">{{#if overview.pos}}{{ formatMoney overview.pos.todaySales }}{{else}}—{{/if}}</div>
+          <div class="metric-sub">{{#if overview.pos}}{{ overview.pos.todayCount }} transaction(s){{else}}POS not connected{{/if}}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Active employees</div>
+          <div class="metric-value">{{#if overview.hr}}{{ overview.hr.activeEmployees }}{{else}}—{{/if}}</div>
+          <div class="metric-sub">{{#if overview.hr}}{{ overview.hr.onLeave }} on leave{{else}}HR not connected{{/if}}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Open purchase orders</div>
+          <div class="metric-value">{{#if overview.scm}}{{ overview.scm.openOrders }}{{else}}—{{/if}}</div>
+          <div class="metric-sub">{{#if overview.scm}}{{ formatMoney overview.scm.openOrdersTotal }} on order{{else}}Procurement not connected{{/if}}</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Customers</div>
+          <div class="metric-value">{{#if overview.crm}}{{ overview.crm.customers }}{{else}}—{{/if}}</div>
+          <div class="metric-sub">{{#if overview.crm}}{{ overview.crm.month.count }} purchase(s) this month{{else}}Customer Logs not connected{{/if}}</div>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-4">
+        <section class="card">
+          <div class="card-header flex items-center justify-between gap-3">
+            <h2 class="card-title">POS &amp; Inventory</h2>
+            <a href="{{ link.pos }}" class="btn btn-ghost">Open POS</a>
+          </div>
+          <div class="card-content">
+            {{#if overview.pos}}
+            <div class="list-row"><span class="list-row-title">Sales this month</span><span class="list-row-amount">{{ formatMoney overview.pos.monthSales }} · {{ overview.pos.monthCount }} txn</span></div>
+            <div class="list-row"><span class="list-row-title">Items at or below minimum stock</span><span class="list-row-amount">{{ overview.pos.lowStock.count }}</span></div>
+            {{#each overview.pos.lowStock.items}}
+            <div class="list-row">
+              <span class="list-row-sub">{{ name }}</span>
+              <span class="list-row-amount text-destructive">{{ currentStock }} / {{ minStockLevel }} {{ unit }}</span>
+            </div>
+            {{/each}}
+            {{else}}
+            <p class="list-empty">POS tables are not installed in this database yet. Run <code>npm run migrate</code> at the ERP root.</p>
+            {{/if}}
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header flex items-center justify-between gap-3">
+            <h2 class="card-title">Procurement</h2>
+            <a href="{{ link.scm }}" class="btn btn-ghost">Open Procurement</a>
+          </div>
+          <div class="card-content">
+            {{#if overview.scm}}
+            <div class="list-row"><span class="list-row-title">Purchase requests waiting for approval</span><span class="list-row-amount">{{ overview.scm.pendingRequests }}</span></div>
+            <div class="list-row"><span class="list-row-title">Open purchase orders</span><span class="list-row-amount">{{ overview.scm.openOrders }} · {{ formatMoney overview.scm.openOrdersTotal }}</span></div>
+            <div class="list-row"><span class="list-row-title">Unpaid supplier invoices</span><span class="list-row-amount">{{ overview.scm.unpaid.count }} · {{ formatMoney overview.scm.unpaid.total }}</span></div>
+            <div class="list-row"><a href="{{ urls.reportApAging }}" class="list-row-sub hover:underline">Compare with AP aging in Accounting</a></div>
+            {{else}}
+            <p class="list-empty">Procurement tables are not installed in this database yet.</p>
+            {{/if}}
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header flex items-center justify-between gap-3">
+            <h2 class="card-title">Human Resources</h2>
+            <a href="{{ link.hr }}" class="btn btn-ghost">Open HR</a>
+          </div>
+          <div class="card-content">
+            {{#if overview.hr}}
+            <div class="list-row"><span class="list-row-title">Active employees</span><span class="list-row-amount">{{ overview.hr.activeEmployees }}</span></div>
+            <div class="list-row"><span class="list-row-title">On leave</span><span class="list-row-amount">{{ overview.hr.onLeave }}</span></div>
+            <div class="list-row"><span class="list-row-title">Net payroll paid this month</span><span class="list-row-amount">{{ formatMoney overview.hr.payroll.total }} · {{ overview.hr.payroll.count }} payslip(s)</span></div>
+            {{else}}
+            <p class="list-empty">HR tables are not installed in this database yet.</p>
+            {{/if}}
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header flex items-center justify-between gap-3">
+            <h2 class="card-title">Customer Logs</h2>
+            <a href="{{ link.crm }}" class="btn btn-ghost">Open Customer Logs</a>
+          </div>
+          <div class="card-content">
+            {{#if overview.crm}}
+            <div class="list-row"><span class="list-row-title">Registered customers</span><span class="list-row-amount">{{ overview.crm.customers }}</span></div>
+            <div class="list-row"><span class="list-row-title">Customer purchases this month (net of refunds)</span><span class="list-row-amount">{{ overview.crm.month.count }} · {{ formatMoney overview.crm.month.total }}</span></div>
+            <div class="list-row"><span class="list-row-title">… recorded automatically by POS</span><span class="list-row-amount">{{ overview.crm.month.fromPos }}</span></div>
+            {{else}}
+            <p class="list-empty">Customer Logs tables are not installed in this database yet.</p>
+            {{/if}}
+          </div>
+        </section>
+      </div>
+
+      <section class="card">
+        <div class="card-header"><h2 class="card-title">Integration status</h2></div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Flow</th><th class="num">Synced</th><th class="num">Waiting</th><th class="num">Failed</th></tr></thead>
+            <tbody>
+              {{#each overview.syncs}}
+              <tr>
+                <td>{{ module }}</td>
+                <td class="num">{{ synced }}</td>
+                <td class="num">{{#if (gt pending 0)}}<span class="badge badge-warning">{{ pending }}</span>{{else}}0{{/if}}</td>
+                <td class="num">{{#if (gt failed 0)}}<span class="badge badge-danger">{{ failed }}</span>{{else}}0{{/if}}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="4" class="text-center text-muted">No module integrations installed yet</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header flex items-center justify-between gap-3">
+          <h2 class="card-title">Postings received from modules</h2>
+          {{#if can.admin}}<a href="{{ urls.integrationGrid }}" class="btn btn-ghost">ERP Integrations</a>{{/if}}
+        </div>
+        <div class="card-content overflow-x-auto">
+          <table class="data-table">
+            <thead><tr><th>Module</th><th>Record type</th><th class="num">Count</th><th>Last received</th></tr></thead>
+            <tbody>
+              {{#each overview.postings}}
+              <tr>
+                <td>{{ name }} <span class="text-muted">({{ systemCode }})</span></td>
+                <td>{{ entityType }}</td>
+                <td class="num">{{ n }}</td>
+                <td class="whitespace-nowrap">{{ formatDateTime lastAt }}</td>
+              </tr>
+              {{else}}
+              <tr><td colspan="4" class="text-center text-muted">Nothing posted through the ERP API yet</td></tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+{{> footer }}

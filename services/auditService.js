@@ -11,7 +11,8 @@ export const AUDIT_CATEGORIES = [
   { value: "bankrec", label: "Bank reconciliation" },
   { value: "period", label: "Period closing" },
   { value: "settings", label: "Settings" },
-  { value: "user", label: "Users" }
+  { value: "user", label: "Users" },
+  { value: "integration", label: "ERP integrations" }
 ];
 
 const ACTION_LABELS = {
@@ -41,14 +42,18 @@ const ACTION_LABELS = {
   "user.password": "Changed password",
   "period.close": "Closed fiscal year",
   "period.reopen": "Reopened fiscal year",
-  "settings.update": "Updated settings"
+  "settings.update": "Updated settings",
+  "integration.create": "Created integration",
+  "integration.update": "Updated integration",
+  "integration.rotate_key": "New API key"
 };
 
 // Writing the trail must never undo an action that already succeeded, so a failed write is
 // reported on the server console instead of being thrown back to the caller.
 // `user` overrides the session user, for events such as login where the session is not set yet.
+// Calls from another ERP system are recorded as "api:<system code>".
 export async function logAudit(req, { action, entityType = null, entityId = null, summary, details = null, user }) {
-  const actor = user ?? req.adminUser;
+  const actor = user ?? req.adminUser ?? (req.apiClient ? { email: `api:${req.apiClient.systemCode}` } : null);
   try {
     await AuditLog.create({
       admin_user_id: actor?.admin_user_id ?? null,

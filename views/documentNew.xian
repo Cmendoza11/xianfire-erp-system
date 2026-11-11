@@ -64,7 +64,7 @@
         </div>
 
         <div class="flex border-t border-border pt-4 justify-between">
-          <a href="{{ page.gridUrl }}" class="btn btn-destructive">Cancel</a>
+          <a href="{{ page.gridUrl }}" class="btn btn-outline">Cancel</a>
           <button type="button" class="btn btn-primary" data-doc-save>Save and post</button>
         </div>
       </div>

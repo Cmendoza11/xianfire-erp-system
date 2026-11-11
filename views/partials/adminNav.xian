@@ -1,64 +1,159 @@
-<nav data-nav class="hidden md:block w-60 shrink-0 bg-white border-r border-border min-h-[calc(100vh-3.5rem)] p-4 md:sticky md:top-14 md:self-start md:max-h-[calc(100vh-3.5rem)] md:overflow-y-auto">
-  <ul class="space-y-1 text-sm">
-    <li>
-      <a href="{{ urls.dashboard }}" class="nav-item {{#if (eq activeMenu "dashboard")}}active{{/if}}">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
-        Dashboard
-      </a>
-    </li>
-  </ul>
-
-  <div class="nav-group">Accounting</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.accountingAccountGrid }}" class="nav-item {{#if (eq activeMenu "accounts")}}active{{/if}}">Chart of Accounts</a></li>
-    <li><a href="{{ urls.accountingJournalGrid }}" class="nav-item {{#if (eq activeMenu "journal")}}active{{/if}}">Journal Entries</a></li>
-    {{#if can.write}}
-    <li><a href="{{ urls.accountingJournalNew }}" class="nav-item {{#if (eq activeMenu "journalNew")}}active{{/if}}">New Journal Entry</a></li>
+<nav data-nav data-nav-active="{{ navSection activeMenu }}" class="app-nav hidden" aria-label="Main">
+  <div class="app-rail">
+    <a href="{{ urls.dashboard }}" class="rail-logo" aria-label="XianFire Accounting home">{{> logo class="w-8 h-8" }}</a>
+    <a href="{{ urls.dashboard }}" class="rail-item {{#if (eq (navSection activeMenu) "home")}}active{{/if}}" data-tip="Dashboard" aria-label="Dashboard">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+    </a>
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "accounting")}}active{{/if}}" data-nav-section="accounting" data-tip="Accounting" aria-label="Accounting">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+    </button>
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "sales")}}active{{/if}}" data-nav-section="sales" data-tip="Sales" aria-label="Sales">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></svg>
+    </button>
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "purchases")}}active{{/if}}" data-nav-section="purchases" data-tip="Purchases" aria-label="Purchases">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </button>
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "banking")}}active{{/if}}" data-nav-section="banking" data-tip="Banking" aria-label="Banking">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 22h18"/><path d="M6 18v-7"/><path d="M10 18v-7"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="m12 2 8 5H4z"/></svg>
+    </button>
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "reports")}}active{{/if}}" data-nav-section="reports" data-tip="Reports" aria-label="Reports">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+    </button>
+    {{#if can.admin}}
+    <button type="button" class="rail-item {{#if (eq (navSection activeMenu) "admin")}}active{{/if}}" data-nav-section="admin" data-tip="Administration" aria-label="Administration">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 4h-7"/><path d="M10 4H3"/><path d="M21 12h-9"/><path d="M8 12H3"/><path d="M21 20h-5"/><path d="M12 20H3"/><path d="M14 2v4"/><path d="M8 10v4"/><path d="M16 18v4"/></svg>
+    </button>
     {{/if}}
-  </ul>
+    <div class="rail-account">{{> accountMenu placement="rail" }}</div>
+  </div>
 
-  <div class="nav-group">Sales</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.customerGrid }}" class="nav-item {{#if (eq activeMenu "customers")}}active{{/if}}">Customers</a></li>
-    <li><a href="{{ urls.invoiceGrid }}" class="nav-item {{#if (eq activeMenu "invoices")}}active{{/if}}">Sales Invoices</a></li>
-  </ul>
+  <div class="app-panel">
+    <button type="button" class="nav-search" data-palette-open aria-label="Search pages and actions">
+      <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      Search
+      <kbd aria-hidden="true" data-shortcut-label>Ctrl K</kbd>
+    </button>
 
-  <div class="nav-group">Purchases</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.supplierGrid }}" class="nav-item {{#if (eq activeMenu "suppliers")}}active{{/if}}">Suppliers</a></li>
-    <li><a href="{{ urls.billGrid }}" class="nav-item {{#if (eq activeMenu "bills")}}active{{/if}}">Bills</a></li>
-  </ul>
+    <div data-nav-group="home" {{#unless (eq (navSection activeMenu) "home")}}hidden{{/unless}}>
+      {{#if can.write}}
+      <ul data-nav-shortcuts>
+        <li><a href="{{ urls.invoiceNew }}" class="nav-quick"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New invoice</a></li>
+      </ul>
+      {{/if}}
+      <div>
+        <div class="nav-group">Dashboard</div>
+        <ul><li><a href="{{ urls.dashboard }}" class="nav-item {{#if (eq activeMenu "dashboard")}}active{{/if}}">Overview</a></li></ul>
+      </div>
+      <div>
+        <div class="nav-group">DJ's ERP</div>
+        <ul>
+          <li><a href="{{ urls.enterpriseOverview }}" class="nav-item {{#if (eq activeMenu "enterprise")}}active{{/if}}">Enterprise Overview</a></li>
+          {{#each erpModules}}{{#unless current}}<li><a href="{{ url }}" class="nav-item">{{ label }}</a></li>{{/unless}}{{/each}}
+        </ul>
+      </div>
+      <div data-nav-shortcuts>
+        <div class="nav-group">Shortcuts</div>
+        <ul>
+          <li><a href="{{ urls.accountingJournalGrid }}" class="nav-item">Journal Entries</a></li>
+          <li><a href="{{ urls.invoiceGrid }}" class="nav-item">Sales Invoices</a></li>
+          <li><a href="{{ urls.billGrid }}" class="nav-item">Bills</a></li>
+          <li><a href="{{ urls.reportTrialBalance }}" class="nav-item">Trial Balance</a></li>
+          <li><a href="{{ urls.reportIncomeStatement }}" class="nav-item">Income Statement</a></li>
+          <li><a href="{{ urls.reportBalanceSheet }}" class="nav-item">Balance Sheet</a></li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="nav-group">Banking</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.reconciliationGrid }}" class="nav-item {{#if (eq activeMenu "bankrec")}}active{{/if}}">Bank Reconciliation</a></li>
-  </ul>
+    <div data-nav-group="accounting" {{#unless (eq (navSection activeMenu) "accounting")}}hidden{{/unless}}>
+      {{#if can.write}}
+      <ul>
+        <li><a href="{{ urls.accountingJournalNew }}" class="nav-quick {{#if (eq activeMenu "journalNew")}}active{{/if}}"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New journal entry</a></li>
+      </ul>
+      {{/if}}
+      <div>
+        <div class="nav-group">Accounting</div>
+        <ul>
+          <li><a href="{{ urls.accountingAccountGrid }}" class="nav-item {{#if (eq activeMenu "accounts")}}active{{/if}}">Chart of Accounts</a></li>
+          <li><a href="{{ urls.accountingJournalGrid }}" class="nav-item {{#if (eq activeMenu "journal")}}active{{/if}}">Journal Entries</a></li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="nav-group">Financial Reports</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.reportGeneralLedger }}" class="nav-item {{#if (eq activeMenu "ledger")}}active{{/if}}">General Ledger</a></li>
-    <li><a href="{{ urls.reportTrialBalance }}" class="nav-item {{#if (eq activeMenu "trialBalance")}}active{{/if}}">Trial Balance</a></li>
-    <li><a href="{{ urls.reportIncomeStatement }}" class="nav-item {{#if (eq activeMenu "incomeStatement")}}active{{/if}}">Income Statement</a></li>
-    <li><a href="{{ urls.reportBalanceSheet }}" class="nav-item {{#if (eq activeMenu "balanceSheet")}}active{{/if}}">Balance Sheet</a></li>
-    <li><a href="{{ urls.reportCashFlow }}" class="nav-item {{#if (eq activeMenu "cashFlow")}}active{{/if}}">Cash Flow Statement</a></li>
-  </ul>
+    <div data-nav-group="sales" {{#unless (eq (navSection activeMenu) "sales")}}hidden{{/unless}}>
+      {{#if can.write}}
+      <ul>
+        <li><a href="{{ urls.invoiceNew }}" class="nav-quick"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New invoice</a></li>
+      </ul>
+      {{/if}}
+      <div>
+        <div class="nav-group">Sales</div>
+        <ul>
+          <li><a href="{{ urls.customerGrid }}" class="nav-item {{#if (eq activeMenu "customers")}}active{{/if}}">Customers</a></li>
+          <li><a href="{{ urls.invoiceGrid }}" class="nav-item {{#if (eq activeMenu "invoices")}}active{{/if}}">Sales Invoices</a></li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="nav-group">Receivables &amp; Tax</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.reportArAging }}" class="nav-item {{#if (eq activeMenu "arAging")}}active{{/if}}">AR Aging</a></li>
-    <li><a href="{{ urls.reportApAging }}" class="nav-item {{#if (eq activeMenu "apAging")}}active{{/if}}">AP Aging</a></li>
-    <li><a href="{{ urls.reportVatSummary }}" class="nav-item {{#if (eq activeMenu "vatSummary")}}active{{/if}}">VAT Summary</a></li>
-    <li><a href="{{ urls.reportSalesBook }}" class="nav-item {{#if (eq activeMenu "salesBook")}}active{{/if}}">Sales Book</a></li>
-    <li><a href="{{ urls.reportPurchaseBook }}" class="nav-item {{#if (eq activeMenu "purchaseBook")}}active{{/if}}">Purchase Book</a></li>
-  </ul>
+    <div data-nav-group="purchases" {{#unless (eq (navSection activeMenu) "purchases")}}hidden{{/unless}}>
+      {{#if can.write}}
+      <ul>
+        <li><a href="{{ urls.billNew }}" class="nav-quick"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>New bill</a></li>
+      </ul>
+      {{/if}}
+      <div>
+        <div class="nav-group">Purchases</div>
+        <ul>
+          <li><a href="{{ urls.supplierGrid }}" class="nav-item {{#if (eq activeMenu "suppliers")}}active{{/if}}">Suppliers</a></li>
+          <li><a href="{{ urls.billGrid }}" class="nav-item {{#if (eq activeMenu "bills")}}active{{/if}}">Bills</a></li>
+        </ul>
+      </div>
+    </div>
 
-  {{#if can.admin}}
-  <div class="nav-group">Administration</div>
-  <ul class="space-y-1 text-sm">
-    <li><a href="{{ urls.periodClosing }}" class="nav-item {{#if (eq activeMenu "periodClosing")}}active{{/if}}">Period Closing</a></li>
-    <li><a href="{{ urls.auditLog }}" class="nav-item {{#if (eq activeMenu "auditLog")}}active{{/if}}">Audit Log</a></li>
-    <li><a href="{{ urls.userGrid }}" class="nav-item {{#if (eq activeMenu "users")}}active{{/if}}">Users</a></li>
-    <li><a href="{{ urls.accountingSetting }}" class="nav-item {{#if (eq activeMenu "setting")}}active{{/if}}">Accounting Settings</a></li>
-  </ul>
-  {{/if}}
+    <div data-nav-group="banking" {{#unless (eq (navSection activeMenu) "banking")}}hidden{{/unless}}>
+      <div>
+        <div class="nav-group">Banking</div>
+        <ul>
+          <li><a href="{{ urls.reconciliationGrid }}" class="nav-item {{#if (eq activeMenu "bankrec")}}active{{/if}}">Bank Reconciliation</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div data-nav-group="reports" {{#unless (eq (navSection activeMenu) "reports")}}hidden{{/unless}}>
+      <div>
+        <div class="nav-group">Financial reports</div>
+        <ul>
+          <li><a href="{{ urls.reportGeneralLedger }}" class="nav-item {{#if (eq activeMenu "ledger")}}active{{/if}}">General Ledger</a></li>
+          <li><a href="{{ urls.reportTrialBalance }}" class="nav-item {{#if (eq activeMenu "trialBalance")}}active{{/if}}">Trial Balance</a></li>
+          <li><a href="{{ urls.reportIncomeStatement }}" class="nav-item {{#if (eq activeMenu "incomeStatement")}}active{{/if}}">Income Statement</a></li>
+          <li><a href="{{ urls.reportBalanceSheet }}" class="nav-item {{#if (eq activeMenu "balanceSheet")}}active{{/if}}">Balance Sheet</a></li>
+          <li><a href="{{ urls.reportCashFlow }}" class="nav-item {{#if (eq activeMenu "cashFlow")}}active{{/if}}">Cash Flow Statement</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="nav-group">Receivables and tax</div>
+        <ul>
+          <li><a href="{{ urls.reportArAging }}" class="nav-item {{#if (eq activeMenu "arAging")}}active{{/if}}">AR Aging</a></li>
+          <li><a href="{{ urls.reportApAging }}" class="nav-item {{#if (eq activeMenu "apAging")}}active{{/if}}">AP Aging</a></li>
+          <li><a href="{{ urls.reportVatSummary }}" class="nav-item {{#if (eq activeMenu "vatSummary")}}active{{/if}}">VAT Summary</a></li>
+          <li><a href="{{ urls.reportSalesBook }}" class="nav-item {{#if (eq activeMenu "salesBook")}}active{{/if}}">Sales Book</a></li>
+          <li><a href="{{ urls.reportPurchaseBook }}" class="nav-item {{#if (eq activeMenu "purchaseBook")}}active{{/if}}">Purchase Book</a></li>
+        </ul>
+      </div>
+    </div>
+
+    {{#if can.admin}}
+    <div data-nav-group="admin" {{#unless (eq (navSection activeMenu) "admin")}}hidden{{/unless}}>
+      <div>
+        <div class="nav-group">Administration</div>
+        <ul>
+          <li><a href="{{ urls.periodClosing }}" class="nav-item {{#if (eq activeMenu "periodClosing")}}active{{/if}}">Period Closing</a></li>
+          <li><a href="{{ urls.auditLog }}" class="nav-item {{#if (eq activeMenu "auditLog")}}active{{/if}}">Audit Log</a></li>
+          <li><a href="{{ urls.userGrid }}" class="nav-item {{#if (eq activeMenu "users")}}active{{/if}}">Users</a></li>
+          <li><a href="{{ urls.integrationGrid }}" class="nav-item {{#if (eq activeMenu "integrations")}}active{{/if}}">ERP Integrations</a></li>
+          <li><a href="{{ urls.accountingSetting }}" class="nav-item {{#if (eq activeMenu "setting")}}active{{/if}}">Accounting Settings</a></li>
+        </ul>
+      </div>
+    </div>
+    {{/if}}
+  </div>
 </nav>

@@ -62,7 +62,7 @@
         </div>
 
         <div class="flex border-t border-border pt-4 justify-between">
-          <a href="{{ urls.accountingJournalGrid }}" class="btn btn-destructive">Cancel</a>
+          <a href="{{ urls.accountingJournalGrid }}" class="btn btn-outline">Cancel</a>
           <button type="button" class="btn btn-primary" data-post-entry disabled>Post entry</button>
         </div>
       </div>

@@ -2,6 +2,7 @@
 export const urls = {
   home: "/",
   dashboard: "/admin",
+  enterpriseOverview: "/admin/enterprise",
   adminLogin: "/admin/login",
   adminLoginJson: "/admin/user/login",
   adminSignup: "/admin/signup",
@@ -78,5 +79,14 @@ export const urls = {
   reportBalanceSheet: "/admin/accounting/reports/balance-sheet",
 
   accountingSetting: "/admin/setting/accounting",
-  saveSetting: "/api/settings"
+  saveSetting: "/api/settings",
+
+  integrationGrid: "/admin/integrations",
+  integrationNew: "/admin/integrations/new",
+  integrationEdit: (id) => `/admin/integrations/edit/${id}`,
+  createIntegration: "/api/integrations",
+  updateIntegration: (id) => `/api/integrations/${id}`,
+  rotateIntegrationKey: (id) => `/api/integrations/${id}/rotate-key`,
+  // Base of the ERP integration API used by the other systems (see docs/ERP-API.md).
+  apiV1: "/api/v1"
 };

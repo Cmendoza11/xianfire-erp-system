@@ -1,0 +1,44 @@
+{{> head}}
+<body>
+{{> adminHeader}}
+<div class="flex">
+  {{> adminNav}}
+  <main class="flex-1 min-w-0 px-4 md:px-8 py-8">
+    <div class="max-w-[75rem] mx-auto space-y-5">
+      {{> pageHeading heading="ERP Integrations" actionUrl=urls.integrationNew actionLabel="New integration" }}
+      <div class="card">
+        <div class="card-content pt-5 overflow-x-auto">
+          {{#if clients.length}}
+          <table class="data-table">
+            <thead><tr><th>System</th><th>Code</th><th>Permissions</th><th>Status</th><th>Last used</th><th>Created</th></tr></thead>
+            <tbody>
+              {{#each clients}}
+              <tr>
+                <td><a href="{{ editUrl }}" class="hover:underline font-medium">{{ name }}</a></td>
+                <td class="font-mono text-sm">{{ systemCode }}</td>
+                <td>{{#each scopeLabels}}<span class="badge badge-info mr-1">{{ this }}</span>{{/each}}</td>
+                <td>{{#if (eq status 1)}}<span class="badge badge-success">Active</span>{{else}}<span class="badge badge-secondary">Revoked</span>{{/if}}</td>
+                <td class="text-sm text-muted">{{#if lastUsedAt}}{{ formatDateTime lastUsedAt }}{{else}}Never{{/if}}</td>
+                <td class="text-sm text-muted">{{ formatDateTime createdAt }}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+          {{else}}
+          <p class="text-sm text-muted">No systems are connected yet. Create one integration for each ERP system (for example Inventory, Payroll or Point of Sale) that needs to share data with accounting.</p>
+          {{/if}}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">How other systems connect</div></div>
+        <div class="card-content text-sm space-y-2">
+          <p>API base URL: <code class="font-mono bg-gray-100 px-1 rounded">{{ apiBaseUrl }}</code></p>
+          <p>Each request sends its key in the header <code class="font-mono bg-gray-100 px-1 rounded">Authorization: Bearer &lt;API key&gt;</code>. Keys belong on the other system's server, never in browser code.</p>
+          <p>Accounts can be referenced by code (e.g. <code class="font-mono">1010</code>). Each system can send its own <code class="font-mono">external_id</code>; a retried request with the same id returns the first result instead of posting twice.</p>
+          <p>Changes made through an integration appear in the Audit Log as <code class="font-mono">api:&lt;code&gt;</code>. The full reference is in <code class="font-mono">docs/ERP-API.md</code>.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+{{> footer }}

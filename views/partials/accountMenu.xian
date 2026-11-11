@@ -1,0 +1,23 @@
+{{#if adminUser}}
+<div class="relative" data-dropdown>
+  <button type="button" data-dropdown-toggle aria-label="Account menu" class="account-toggle">{{ adminUser.initial }}</button>
+  <div data-dropdown-menu class="account-menu account-menu-{{ placement }} hidden">
+    <div class="px-2.5 py-1.5">
+      <div class="text-[13px] font-medium truncate">{{ adminUser.fullName }}</div>
+      <div class="text-xs text-muted">{{ adminUser.roleLabel }}</div>
+    </div>
+    <div class="border-t border-border my-1"></div>
+    <div class="flex items-center justify-between gap-2 px-2.5 py-1">
+      <span class="text-[13px]">Theme</span>
+      <div class="segmented" role="group" aria-label="Theme">
+        <button type="button" data-theme-choice="light">Light</button>
+        <button type="button" data-theme-choice="dark">Dark</button>
+        <button type="button" data-theme-choice="system">Auto</button>
+      </div>
+    </div>
+    <div class="border-t border-border my-1"></div>
+    <a href="{{ urls.changePassword }}" class="account-menu-item">Change password</a>
+    <button type="button" data-logout="{{ urls.adminLogoutJson }}" data-login-url="{{ urls.adminLogin }}" class="account-menu-item text-destructive">Log out</button>
+  </div>
+</div>
+{{/if}}

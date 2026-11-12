@@ -50,7 +50,7 @@ Request flow: `routes/index.js` → `controllers/` (HTTP and audit) → `service
 | Audit log | `services/auditService.js`, `controllers/auditController.js` |
 | `/api/v1` | `routes/apiV1.js`, `controllers/apiV1Controller.js`, `services/integrationService.js`, `middleware/apiKey.js`, `docs/ERP-API.md` |
 | API key admin pages | `controllers/integrationController.js`, `views/integrationForm.xian`, `public/js/integration.js` |
-| Sidebar menu | `views/partials/adminNav.xian`, plus `NAV_SECTIONS` in `helpers/handlebars.js` for each new `activeMenu` value |
+| Sidebar menu | `views/partials/adminNav.xian`, plus `NAV_SECTIONS` in `index.js` for each new `activeMenu` value |
 | Theme, shell layout | `public/css/admin.css` (tokens in `:root`), `views/partials/head.xian` (Tailwind colours must match) |
 
 ## 3. Shape of a new endpoint
@@ -135,7 +135,7 @@ To test the API without touching real data: `DB_NAME=xianfires_erp_qa node migra
 1. Always run the syntax check. It prints only failures:
 
 ```bash
-for f in *.js controllers/*.js services/*.js models/*.js routes/*.js middleware/*.js helpers/*.js public/js/*.js; do node --check "$f" || echo "FAIL $f"; done
+for f in *.js controllers/*.js services/*.js models/*.js routes/*.js middleware/*.js public/js/*.js; do node --check "$f" || echo "FAIL $f"; done
 ```
 
 2. Runtime check needs MySQL on port 3306 (Laragon). If the schema changed, run `npm run migrate -- --yes`. Start with `npm run xian` and exercise the changed route as a logged-in user.

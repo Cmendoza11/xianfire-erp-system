@@ -32,7 +32,6 @@ import fs from 'fs';
 import hbs from "hbs";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import { registerHelpers } from "./helpers/handlebars.js";
 import { loadAdminUser } from "./middleware/auth.js";
 import { erpModules } from "./middleware/erpModules.js";
 import { notFoundPage } from "./controllers/homeController.js";
@@ -83,7 +82,42 @@ app.engine("xian", async (filePath, options, callback) => {
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "xian");
-registerHelpers();
+
+const moneyFormatter = new Intl.NumberFormat("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const dateTimeFormatter = new Intl.DateTimeFormat("en-PH", { dateStyle: "medium", timeStyle: "short" });
+
+// Which sidebar section each page opens; a page not listed opens the dashboard section.
+const NAV_SECTIONS = {
+  accounts: "accounting", journal: "accounting", journalNew: "accounting",
+  customers: "sales", invoices: "sales",
+  suppliers: "purchases", bills: "purchases",
+  bankrec: "banking",
+  ledger: "reports", trialBalance: "reports", incomeStatement: "reports", balanceSheet: "reports", cashFlow: "reports",
+  arAging: "reports", apAging: "reports", vatSummary: "reports", salesBook: "reports", purchaseBook: "reports",
+  periodClosing: "admin", auditLog: "admin", users: "admin", integrations: "admin", setting: "admin"
+};
+
+hbs.registerHelper("navSection", (activeMenu) => NAV_SECTIONS[activeMenu] ?? "home");
+hbs.registerHelper("formatDateTime", (value) => {
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  return Number.isNaN(d.getTime()) ? "" : dateTimeFormatter.format(d);
+});
+hbs.registerHelper("formatMoney", (value) => moneyFormatter.format(Number(value ?? 0)));
+hbs.registerHelper("formatSignedMoney", (value) => {
+  const n = Number(value ?? 0);
+  return n < 0 ? `(${moneyFormatter.format(Math.abs(n))})` : moneyFormatter.format(n);
+});
+hbs.registerHelper("eq", (a, b) => String(a) === String(b));
+hbs.registerHelper("gt", (a, b) => Number(a) > Number(b));
+hbs.registerHelper("lowercase", (value) => String(value ?? "").toLowerCase());
+// The last argument Handlebars passes is its options object, so it is dropped.
+hbs.registerHelper("concat", (...args) => args.slice(0, -1).join(""));
+// Embeds data for page scripts; escaping "<" stops a value such as "</script>" from closing the tag.
+hbs.registerHelper(
+  "json",
+  (value) => new hbs.handlebars.SafeString(JSON.stringify(value ?? null).replace(/</g, "\\u003c"))
+);
 const partialsDir = path.join(__dirname, "views/partials");
 fs.readdir(partialsDir, (err, files) => {
   if (err) {

@@ -1,4 +1,4 @@
-import { buildPagination, positiveInt } from "../helpers/pagination.js";
+import { buildPagination, positiveInt } from "../services/pagination.js";
 import { urls } from "../routes/urls.js";
 import { AccountingValidationError } from "../services/accountTypes.js";
 import { logAudit } from "../services/auditService.js";

@@ -1,7 +1,7 @@
 // /api/v1: the versioned API the other ERP systems (inventory, payroll, POS, ...) call with an API
 // key. Handlers reuse the same services as the admin pages, so every ledger rule (balanced entries,
 // closed periods, inactive accounts, payment limits) applies to integrations too.
-import { positiveInt } from "../helpers/pagination.js";
+import { positiveInt } from "../services/pagination.js";
 import { hasScope } from "../middleware/apiKey.js";
 import { Account, Invoice, Payment } from "../models/index.js";
 import { getAccount, listAccounts, UUID_PATTERN } from "../services/accountService.js";
